@@ -21,7 +21,7 @@ limitations under the License.
    modelPluginVariables="org.eclipse.xtext.xbase.lib org.eclipse.emf.ecore.xcore.lib org.eclipse.emf.cdo",
    rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl",
    rootExtendsInterface="org.eclipse.emf.cdo.CDOObject",
-   modelDirectory="jpl.imce.oml.specification.ecore/src-gen", 
+   modelDirectory="jpl.imce.oml.specification.ecore/build/xcore/main/",
    modelName="OMLC")
   
 // If commented, it is possible to build cleanly with 'gradle :generateXtext'

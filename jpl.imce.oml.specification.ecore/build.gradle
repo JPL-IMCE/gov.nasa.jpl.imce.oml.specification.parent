@@ -19,7 +19,6 @@ dependencies {
 	xtextLanguages withEclipseBundle('org.eclipse.emf.ecore.xcore')
 }
 
-
 configurations {
 	xtextLanguages {
 		extendsFrom compile
@@ -27,6 +26,7 @@ configurations {
 	compile.transitive = true
 	testCompile.transitive = true
 }
+
 eclipse {
     project {
         natures 'org.eclipse.pde.PluginNature'
@@ -36,14 +36,14 @@ eclipse {
 }
 
 sourceSets {
-	main {
-		java.srcDirs = ['src', 'build/xcore/main/']
-		resources.srcDirs = ['model']
-		xtendOutputDir = 'build/xcore/main/'
+    main {
+        java.srcDirs = ['src', 'build/xcore/main/']
+        resources.srcDirs = ['model']
+        xtendOutputDir = 'build/xcore/main/'
         resources {
             exclude '**/*.xcore'
         }
-	}
+    }
     test {
         java.srcDirs = []
         resources.srcDirs = []
