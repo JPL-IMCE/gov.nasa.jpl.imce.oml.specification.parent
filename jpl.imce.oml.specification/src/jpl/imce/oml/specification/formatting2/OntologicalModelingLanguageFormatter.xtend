@@ -38,7 +38,7 @@ import gov.nasa.jpl.imce.oml.terminologies.TerminologyExtensionAxiom
 
 class OntologicalModelingLanguageFormatter extends AbstractFormatter2 {
 	
-	@Inject extension OntologicalModelingLanguageGrammarAccess
+	//@Inject extension OntologicalModelingLanguageGrammarAccess
 
 	def dispatch void format(Extent extent, extension IFormattableDocument document) {
 		extent.prepend[noSpace]
@@ -54,30 +54,30 @@ class OntologicalModelingLanguageFormatter extends AbstractFormatter2 {
 
 	def dispatch void format(AnnotationProperty annotationProperty, extension IFormattableDocument document) {
 		annotationProperty.prepend[noSpace]
-		annotationProperty.regionFor.ruleCall(annotationPropertyAccess.ANNOTATION_PROPERTY_TOKENTerminalRuleCall_0).append[oneSpace]
-		annotationProperty.regionFor.ruleCall(annotationPropertyAccess.EQUALTerminalRuleCall_2).surround[noSpace]
+//		annotationProperty.regionFor.ruleCall(annotationPropertyAccess.ANNOTATION_PROPERTY_TOKENTerminalRuleCall_0).append[oneSpace]
+//		annotationProperty.regionFor.ruleCall(annotationPropertyAccess.EQUALTerminalRuleCall_2).surround[noSpace]
 		annotationProperty.regionFor.feature(CommonPackage.eINSTANCE.annotationProperty_Iri).append[newLine]
 	}
 	
 	def dispatch void format(Annotation annotation, extension IFormattableDocument document) {
 		annotation.prepend[noSpace]
-		annotation.regionFor.ruleCall(annotationAccess.ANNOTATION_TOKENTerminalRuleCall_0).append[oneSpace]
-		annotation.regionFor.ruleCall(annotationAccess.EQUALTerminalRuleCall_2).surround[noSpace]
+//		annotation.regionFor.ruleCall(annotationAccess.ANNOTATION_TOKENTerminalRuleCall_0).append[oneSpace]
+//		annotation.regionFor.ruleCall(annotationAccess.EQUALTerminalRuleCall_2).surround[noSpace]
 	}
 	
 	def dispatch void format(TerminologyGraph terminologyGraph, extension IFormattableDocument document) {
 		terminologyGraph.prepend[noSpace]
 			
 		terminologyGraph.regionFor.feature(TerminologiesPackage.eINSTANCE.terminologyBox_Kind).append[oneSpace]
-		terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.TERMINOLOGY_GRAPH_TOKENTerminalRuleCall_1).surround[oneSpace]
-		terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.iriIRITerminalRuleCall_2_0).surround[oneSpace]
+//		terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.TERMINOLOGY_GRAPH_TOKENTerminalRuleCall_1).surround[oneSpace]
+//		terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.iriIRITerminalRuleCall_2_0).surround[oneSpace]
 	
-		val lcurly = terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.LCURLYTerminalRuleCall_3)
-		val rcurly = terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.RCURLYTerminalRuleCall_5)
-		lcurly.prepend[oneSpace]
-		lcurly.append[newLine]
-		interior(lcurly, rcurly)[indent]
-		rcurly.append[newLine]
+//		val lcurly = terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.LCURLYTerminalRuleCall_3)
+//		val rcurly = terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.RCURLYTerminalRuleCall_5)
+//		lcurly.prepend[oneSpace]
+//		lcurly.append[newLine]
+//		interior(lcurly, rcurly)[indent]
+//		rcurly.append[newLine]
 		
 		for (Annotation annotations : terminologyGraph.getAnnotations()) {
 			annotations.format
@@ -96,10 +96,10 @@ class OntologicalModelingLanguageFormatter extends AbstractFormatter2 {
 	def dispatch void format(Bundle bundle, extension IFormattableDocument document) {
 		bundle.prepend[noSpace]
 			
-		val lcurly = bundle.regionFor.ruleCall(terminologyGraphAccess.LCURLYTerminalRuleCall_3)
-		val rcurly = bundle.regionFor.ruleCall(terminologyGraphAccess.RCURLYTerminalRuleCall_5)
-		lcurly.append[newLine]
-		interior(lcurly, rcurly)[indent]
+//		val lcurly = bundle.regionFor.ruleCall(terminologyGraphAccess.LCURLYTerminalRuleCall_3)
+//		val rcurly = bundle.regionFor.ruleCall(terminologyGraphAccess.RCURLYTerminalRuleCall_5)
+//		lcurly.append[newLine]
+//		interior(lcurly, rcurly)[indent]
 		
 		for (Annotation annotations : bundle.getAnnotations()) {
 			annotations.format
@@ -125,10 +125,10 @@ class OntologicalModelingLanguageFormatter extends AbstractFormatter2 {
 	def dispatch void format(DescriptionBox descriptionBox, extension IFormattableDocument document) {
 		descriptionBox.prepend[noSpace]
 			
-		val lcurly = descriptionBox.regionFor.ruleCall(terminologyGraphAccess.LCURLYTerminalRuleCall_3)
-		val rcurly = descriptionBox.regionFor.ruleCall(terminologyGraphAccess.RCURLYTerminalRuleCall_5)
-		lcurly.append[newLine]
-		interior(lcurly, rcurly)[indent]
+//		val lcurly = descriptionBox.regionFor.ruleCall(terminologyGraphAccess.LCURLYTerminalRuleCall_3)
+//		val rcurly = descriptionBox.regionFor.ruleCall(terminologyGraphAccess.RCURLYTerminalRuleCall_5)
+//		lcurly.append[newLine]
+//		interior(lcurly, rcurly)[indent]
 		
 		for (Annotation annotations : descriptionBox.getAnnotations()) {
 			annotations.format
@@ -137,13 +137,13 @@ class OntologicalModelingLanguageFormatter extends AbstractFormatter2 {
 
 	def dispatch void format(Aspect aspect, extension IFormattableDocument document) {
 		aspect.prepend[noSpace]
-		aspect.regionFor.ruleCall(aspectAccess.ASPECT_TOKENTerminalRuleCall_0).append[oneSpace]
-		aspect.regionFor.ruleCall(aspectAccess.nameIDTerminalRuleCall_1_0).append[newLine]
+//		aspect.regionFor.ruleCall(aspectAccess.ASPECT_TOKENTerminalRuleCall_0).append[oneSpace]
+//		aspect.regionFor.ruleCall(aspectAccess.nameIDTerminalRuleCall_1_0).append[newLine]
 	}
 	
 	def dispatch void format(TerminologyExtensionAxiom ax, extension IFormattableDocument document) {
 		ax.prepend[noSpace]
-		ax.regionFor.ruleCall(terminologyExtensionAxiomAccess.EXTENDS_TOKENTerminalRuleCall_0).append[oneSpace]
-		ax.regionFor.ruleCall(terminologyExtensionAxiomAccess.extendedTerminologyTerminologyBoxReferenceParserRuleCall_1_0_1).append[newLine]
+//		ax.regionFor.ruleCall(terminologyExtensionAxiomAccess.EXTENDS_TOKENTerminalRuleCall_0).append[oneSpace]
+//		ax.regionFor.ruleCall(terminologyExtensionAxiomAccess.extendedTerminologyTerminologyBoxReferenceParserRuleCall_1_0_1).append[newLine]
 	}
 }
