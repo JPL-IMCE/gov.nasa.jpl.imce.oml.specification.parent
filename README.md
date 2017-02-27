@@ -1,5 +1,20 @@
 # Composite project for JPL's Integrated Model-Centric Engineering (IMCE) Ontological Modeling Language (OML) Specification
 
+This is a multi-project of mostly Xcore/Xtext/Xtend sources used to generate several components (abstract syntax metamodel; concrete syntax parser, doc, ...).
+There are several Xtend-based code generators that produce Scala source code.
+Unfortunately, it has been more difficult than originally anticipated to achieve the following objectives:
+
+- Reproducible & consistent builds everywhere from a unix-like terminal and from the IDE (Eclipse or Intellij IDEA).
+- No duplication of configuration information (e.g. dependencies specified only in one place).
+- All Generated artifacts should be location-neutral & platform-neutral 
+  and should re-generate without any difference if the inputs haven't changed.
+- A machine-readable report of the provenance of each generated artifact 
+  to a particular generation tool, inputs and configuration settings.
+- Unified dependency management for both Eclipse P2-based repositories 
+  and Maven artifact repositories for both jar artifacts and zip aggregates of jar artifacts.
+
+Currently, this project reflects an attempt at using Gradle to achieve the above objectives; however, the result is far from achieving all the objectives.
+
 Travis CI: [![Build Status](https://travis-ci.org/JPL-IMCE/jpl.imce.oml.specification.parent.svg?branch=master)](https://travis-ci.org/JPL-IMCE/jpl.imce.oml.specification.parent)
 
 Bintray: [ ![Download](https://api.bintray.com/packages/jpl-imce/gov.nasa.jpl.imce.p2/jpl.imce.oml.specification.p2/images/download.svg) ](https://bintray.com/jpl-imce/gov.nasa.jpl.imce.p2/jpl.imce.oml.specification.p2/_latestVersion)

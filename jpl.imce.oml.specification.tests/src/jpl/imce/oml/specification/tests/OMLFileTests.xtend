@@ -83,8 +83,31 @@ class OMLFileTests extends OMLTest {
 				put(FormatterPreferenceKeys.indentation, "\t")
 				put(FormatterPreferenceKeys.tabWidth, 2)
 			]
+// Works with grammar-based formatting; doesn't work without.
+//
+//			expectation = 
+//'''open terminology <http://imce.jpl.nasa.gov/foundation/base/base> {
+//	aspect IdentifiedElement
+//}
+//'''
+
+//			toBeFormatted = '''
+//				 open 
+//				 
+//				  terminology 
+//				  
+//				    <http://imce.jpl.nasa.gov/foundation/base/base>       {
+//					
+//					    aspect 
+//					  IdentifiedElement
+//				}
+//			'''
+
+// Without grammar-based formatting.
 			expectation = 
-'''open terminology <http://imce.jpl.nasa.gov/foundation/base/base> {
+'''
+
+open terminology <http://imce.jpl.nasa.gov/foundation/base/base> {
 	aspect IdentifiedElement
 }
 '''
@@ -94,9 +117,7 @@ class OMLFileTests extends OMLTest {
 				  terminology 
 				  
 				    <http://imce.jpl.nasa.gov/foundation/base/base>       {
-					
-					    aspect 
-					  IdentifiedElement
+					aspect IdentifiedElement
 				}
 			'''
 		]
