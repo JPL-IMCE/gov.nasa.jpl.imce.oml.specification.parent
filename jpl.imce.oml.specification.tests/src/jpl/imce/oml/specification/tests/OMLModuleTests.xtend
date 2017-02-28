@@ -90,25 +90,7 @@ class OMLModuleTests extends OMLTest {
 			]
 			
 // Works with grammar-based formatting; doesn't work without.
-//			expectation = 
-//			"open terminology <http://imce.jpl.nasa.gov/foundation/base/base> {\n"+
-//			"\taspect IdentifiedElement\n"+
-//			"}\n"
-//			toBeFormatted = '''
-//				 open 
-//				 
-//				  terminology 
-//				  
-//				    <http://imce.jpl.nasa.gov/foundation/base/base>       {
-//					
-//					    aspect 
-//					  IdentifiedElement
-//				}
-//			'''
-
-// Without grammar-based formatting.
 			expectation = 
-			"\n"+
 			"open terminology <http://imce.jpl.nasa.gov/foundation/base/base> {\n"+
 			"\taspect IdentifiedElement\n"+
 			"}\n"
@@ -118,9 +100,27 @@ class OMLModuleTests extends OMLTest {
 				  terminology 
 				  
 				    <http://imce.jpl.nasa.gov/foundation/base/base>       {
-					aspect IdentifiedElement
+					
+					    aspect 
+					  IdentifiedElement
 				}
 			'''
+
+// Without grammar-based formatting.
+//			expectation = 
+//			"\n"+
+//			"open terminology <http://imce.jpl.nasa.gov/foundation/base/base> {\n"+
+//			"\taspect IdentifiedElement\n"+
+//			"}\n"
+//			toBeFormatted = '''
+//				 open 
+//				 
+//				  terminology 
+//				  
+//				    <http://imce.jpl.nasa.gov/foundation/base/base>       {
+//					aspect IdentifiedElement
+//				}
+//			'''
 		]
 	}
 }
