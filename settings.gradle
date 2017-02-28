@@ -3,12 +3,21 @@ include 'gov.nasa.jpl.imce.oml.specification.scala.generators'
 include 'jpl.imce.oml.specification'
 include 'gov.nasa.jpl.imce.oml.specification.doc'
 include 'jpl.imce.oml.specification.tests'
-include 'jpl.imce.oml.specification.ecore.edit'
-include 'jpl.imce.oml.specification.ecore.editor'
-include 'jpl.imce.oml.specification.ui'
-include 'jpl.imce.oml.specification.ui.tests'
-include 'jpl.imce.oml.specification.ide'
+
+// TODO: re-enable generating the code for the projects below.
+// Note that this can lead the problem that Ed Merks explained here if the XcoreGenerator
+// needs to use the GenModel generator for saving some files (e.g., the plugin.xml for the 'edit' component).
+// https://www.eclipse.org/forums/index.php?t=msg&th=1084555&goto=1754620&#msg_1754620
+
+//include 'jpl.imce.oml.specification.ecore.edit'
+//include 'jpl.imce.oml.specification.ecore.editor'
+//include 'jpl.imce.oml.specification.ui'
+//include 'jpl.imce.oml.specification.ui.tests'
+//include 'jpl.imce.oml.specification.ide'
 //include 'jpl.imce.oml.specification.idea'
-include 'jpl.imce.oml.specification.web'
-include 'jpl.imce.oml.specification.feature'
-include 'jpl.imce.oml.specification.repository'
+//include 'jpl.imce.oml.specification.web'
+
+// TODO: separate the feature in a non-ui vs. ui
+
+//include 'jpl.imce.oml.specification.feature'
+//include 'jpl.imce.oml.specification.repository'
