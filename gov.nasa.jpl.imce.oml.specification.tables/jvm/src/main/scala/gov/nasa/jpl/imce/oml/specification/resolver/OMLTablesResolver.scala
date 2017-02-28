@@ -155,7 +155,7 @@ object OMLTablesResolver {
         boxAxioms=TreeSet.empty[api.TerminologyBoxAxiom],
         bundleStatements=TreeSet.empty[api.TerminologyBundleStatement],
         bundleAxioms=TreeSet.empty[api.TerminologyBundleAxiom])
-      if (tb.uuid.toString != tb.uuid)
+      if (tb.uuid.toString != b.uuid)
         throw new java.lang.IllegalArgumentException(s"OMLTablesResolver.Bundle UUID mismatch: read: $b; created: $tb")
       gi + tb
     }
