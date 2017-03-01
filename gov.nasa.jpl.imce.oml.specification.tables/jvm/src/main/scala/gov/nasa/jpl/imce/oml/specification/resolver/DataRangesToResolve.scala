@@ -48,6 +48,8 @@ case class DataRangesToResolve
 
 object DataRangesToResolve {
 
+  import OMLOps._
+
   private def partitionRestrictableDataRanges[T]
   (r: OMLTablesResolver,
    tbox: api.TerminologyBox,

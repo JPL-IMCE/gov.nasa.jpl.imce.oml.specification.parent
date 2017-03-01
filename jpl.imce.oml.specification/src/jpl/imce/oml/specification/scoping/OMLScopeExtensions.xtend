@@ -21,15 +21,15 @@ import com.google.common.base.Function
 import com.google.common.collect.Lists
 import com.google.inject.Inject
 import java.util.ArrayList
-import jpl.imce.oml.specification.ecore.Annotation
-import jpl.imce.oml.specification.ecore.AspectSpecializationAxiom
-import jpl.imce.oml.specification.ecore.BundledTerminologyAxiom
-import jpl.imce.oml.specification.ecore.ConceptDesignationTerminologyAxiom
-import jpl.imce.oml.specification.ecore.EntityRelationship
-import jpl.imce.oml.specification.ecore.Resource
-import jpl.imce.oml.specification.ecore.TerminologyBox
-import jpl.imce.oml.specification.ecore.TerminologyExtensionAxiom
-import jpl.imce.oml.specification.ecore.TerminologyThing
+import gov.nasa.jpl.imce.oml.common.Annotation
+import gov.nasa.jpl.imce.oml.terminologies.AspectSpecializationAxiom
+import gov.nasa.jpl.imce.oml.bundles.BundledTerminologyAxiom
+import gov.nasa.jpl.imce.oml.graphs.ConceptDesignationTerminologyAxiom
+import gov.nasa.jpl.imce.oml.terminologies.EntityRelationship
+import gov.nasa.jpl.imce.oml.common.Resource
+import gov.nasa.jpl.imce.oml.terminologies.TerminologyBox
+import gov.nasa.jpl.imce.oml.terminologies.TerminologyExtensionAxiom
+import gov.nasa.jpl.imce.oml.common.Element
 import jpl.imce.oml.specification.ecore.extensions.OMLExtensions
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.naming.IQualifiedNameConverter
@@ -67,7 +67,7 @@ class OMLScopeExtensions {
 	
 	def scope_BundledTerminologyAxiom_bundledTerminology(BundledTerminologyAxiom context) {
 		Scopes.scopeFor(
-			context.terminologyBundle.extent.terminologies,
+			context.bundle.extent.terminologies,
 			[ qnc.toQualifiedName(it.nsPrefix) ],
 			IScope.NULLSCOPE)	
 	}
@@ -107,7 +107,7 @@ class OMLScopeExtensions {
 	/*
 	 * Computes an IScope for 
 	 */
-	def <T extends TerminologyThing> IScope terminologyScope(
+	def <T extends Element> IScope terminologyScope(
 		TerminologyBox tbox,
 		Function<TerminologyBox, Iterable<T>> localScopeFunction,
 		Function<Pair<TerminologyBox, T>, QualifiedName> nameFunction

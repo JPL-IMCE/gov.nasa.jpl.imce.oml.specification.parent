@@ -16,88 +16,102 @@
  */
 package jpl.imce.oml.specification.formatting2
 
-import jpl.imce.oml.specification.ecore.Annotation
-import jpl.imce.oml.specification.ecore.AnnotationProperty
-import jpl.imce.oml.specification.ecore.Bundle
-import jpl.imce.oml.specification.ecore.DescriptionBox
-import jpl.imce.oml.specification.ecore.TerminologyBoxAxiom
-import jpl.imce.oml.specification.ecore.TerminologyBoxStatement
-import jpl.imce.oml.specification.ecore.TerminologyExtent
-import jpl.imce.oml.specification.ecore.TerminologyGraph
+import gov.nasa.jpl.imce.oml.common.Annotation
+import gov.nasa.jpl.imce.oml.common.AnnotationProperty
+import gov.nasa.jpl.imce.oml.common.Module
+import gov.nasa.jpl.imce.oml.bundles.Bundle
+import gov.nasa.jpl.imce.oml.descriptions.DescriptionBox
+import gov.nasa.jpl.imce.oml.terminologies.TerminologyBoxAxiom
+import gov.nasa.jpl.imce.oml.terminologies.TerminologyBoxStatement
+import gov.nasa.jpl.imce.oml.common.Extent
+import gov.nasa.jpl.imce.oml.graphs.TerminologyGraph
+
 import org.eclipse.xtext.formatting2.AbstractFormatter2
 import org.eclipse.xtext.formatting2.IFormattableDocument
-import jpl.imce.oml.specification.ecore.OMLPackage
-import jpl.imce.oml.specification.ecore.Aspect
+import gov.nasa.jpl.imce.oml.terminologies.Aspect
+import gov.nasa.jpl.imce.oml.terminologies.TerminologiesPackage
+import gov.nasa.jpl.imce.oml.common.CommonPackage
+import gov.nasa.jpl.imce.oml.bundles.TerminologyBundleAxiom
+import gov.nasa.jpl.imce.oml.bundles.TerminologyBundleStatement
+import gov.nasa.jpl.imce.oml.terminologies.TerminologyExtensionAxiom
 
-// Cannot use the GrammarAccess for the formatter because it fails to build cleanly with the xtext-gradle-plugin.
-// See: https://www.eclipse.org/forums/index.php?t=msg&th=1084511&goto=1754437&#msg_1754437
+// With Xtext 2.11, grammar-based formatting works in the IDE or in gradle running on macosx but not in gradle running on linux.
 
-//import com.google.inject.Inject
-//import jpl.imce.oml.specification.services.OntologicalModelingLanguageGrammarAccess
+// It seems that grammar-based formatting should have an equivalent to token-based or feature-based formatting:
+// regionFor.ruleCall(<grammar rule for parsing a feature>) should be equivalent to:
+// regionFor.feature(<EPackage metaclass feature>) 
+// 
+// and:
+// regionFor.ruleCall(<grammar rule for parsing a token>) should be equivalent to:
+// regionFor.keyword(<token>) when the <token> is occuring only once in the enclosing grammar rule.
+// 
+// In practice, this equivalence doesn't work like this.
+// The following is an approximation to this equivalence.
+// The main differences are:
+// - inserting a newline after '{' works with grammar-based formatting; it doesn't with keyword-based formatting
+// - collapsing whitespace works with grammar-based formatting; it is not reliable with token-based formatting.
+// - without grammar-based formatting, the default rules work better than trying to 
+//   emulate the equivalent with feature/token based formatting; except that whitespace is not collapsed!
 
-@SuppressWarnings("all")
+// When grammar-based formatting builds & behaves consistently everywhere...
+import com.google.inject.Inject
+import jpl.imce.oml.specification.services.OntologicalModelingLanguageGrammarAccess
+
 class OntologicalModelingLanguageFormatter extends AbstractFormatter2 {
 	
-	// Refactored to do formatting without a dependency injection for the GrammarAccess.
-	//@Inject extension OntologicalModelingLanguageGrammarAccess
+	@Inject extension OntologicalModelingLanguageGrammarAccess
 
-	def dispatch void format(TerminologyExtent terminologyExtent, extension IFormattableDocument document) {
-		terminologyExtent.prepend[newLine]
+	def dispatch void format(Extent extent, extension IFormattableDocument document) {
+		extent.prepend[noSpace]
 		
-		for (AnnotationProperty annotationProperty : terminologyExtent.getAnnotationProperties()) {
+		for (AnnotationProperty annotationProperty : extent.getAnnotationProperties()) {
 			annotationProperty.format;
 		}
 		
-		for (TerminologyGraph terminologyGraph : terminologyExtent.getTerminologyGraphs()) {
-			terminologyGraph.format;
-		}
-		
-		for (Bundle bundle : terminologyExtent.getBundles()) {
-			bundle.format;
-		}
-		
-		for (DescriptionBox description : terminologyExtent.getDescriptions()) {
-			description.format;
+		for (Module module : extent.getModules()) {
+			module.format;
 		}
 	}
 
 	def dispatch void format(AnnotationProperty annotationProperty, extension IFormattableDocument document) {
-		annotationProperty.prepend[newLine]
+		annotationProperty.prepend[noSpace]
 		
-		//annotationProperty.regionFor.ruleCall(annotationPropertyAccess.ANNOTATION_PROPERTY_TOKENTerminalRuleCall_0).append[oneSpace]
-		//annotationProperty.regionFor.ruleCall(annotationPropertyAccess.EQUALTerminalRuleCall_2).surround[noSpace]
+		annotationProperty.regionFor.ruleCall(annotationPropertyAccess.ANNOTATION_PROPERTY_TOKENTerminalRuleCall_0).append[oneSpace]
+//		annotationProperty.regionFor.feature(CommonPackage.eINSTANCE.annotationProperty_AbbrevIRI).prepend[oneSpace]
+
+		annotationProperty.regionFor.ruleCall(annotationPropertyAccess.EQUALTerminalRuleCall_2).surround[noSpace]
+//		annotationProperty.regionFor.keyword("=").surround[noSpace]
 		
-		annotationProperty.regionFor.keyword("annotationProperty").append[oneSpace]
-		
-		annotationProperty.regionFor.feature(OMLPackage.eINSTANCE.annotationProperty_AbbrevIRI).prepend[oneSpace]
-		annotationProperty.regionFor.keyword("=").surround[noSpace]
-		
-		annotationProperty.regionFor.feature(OMLPackage.eINSTANCE.annotationProperty_Iri).append[newLine]
+		annotationProperty.regionFor.feature(CommonPackage.eINSTANCE.annotationProperty_Iri).append[newLine]
 	}
 	
 	def dispatch void format(Annotation annotation, extension IFormattableDocument document) {
-		annotation.prepend[newLine]
-		//annotation.regionFor.ruleCall(annotationAccess.ANNOTATION_TOKENTerminalRuleCall_0).append[oneSpace]
-		annotation.regionFor.keyword("annotation").append[oneSpace]
-		//annotation.regionFor.ruleCall(annotationAccess.EQUALTerminalRuleCall_2).surround[noSpace]
-		annotation.regionFor.keyword("=").surround[noSpace]
+		annotation.prepend[noSpace]
+		annotation.regionFor.ruleCall(annotationAccess.ANNOTATION_TOKENTerminalRuleCall_0).append[oneSpace]
+//		annotation.regionFor.keyword("annotation").append[oneSpace]
+		
+		annotation.regionFor.ruleCall(annotationAccess.EQUALTerminalRuleCall_2).surround[noSpace]
+//		annotation.regionFor.keyword("=").surround[noSpace]
 	}
 	
 	def dispatch void format(TerminologyGraph terminologyGraph, extension IFormattableDocument document) {
-		terminologyGraph.prepend[newLine]
+		terminologyGraph.prepend[noSpace]
+//		terminologyGraph.prepend[newLine]
 			
-		terminologyGraph.regionFor.feature(OMLPackage.eINSTANCE.terminologyBox_Kind).append[oneSpace]
+		terminologyGraph.regionFor.feature(TerminologiesPackage.eINSTANCE.terminologyBox_Kind).append[oneSpace]
 		
-		//terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.TERMINOLOGY_GRAPH_TOKENTerminalRuleCall_1).surround[oneSpace]
-		terminologyGraph.regionFor.keyword("terminology").surround[oneSpace]
+		terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.TERMINOLOGY_GRAPH_TOKENTerminalRuleCall_1).surround[oneSpace]
+//		terminologyGraph.regionFor.keyword("terminology").surround[oneSpace]
 		
-		//terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.iriIRITerminalRuleCall_2_0).surround[oneSpace]
-		terminologyGraph.regionFor.feature(OMLPackage.eINSTANCE.module_Iri).surround[oneSpace]
+		terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.iriIRITerminalRuleCall_2_0).surround[oneSpace]
+//		terminologyGraph.regionFor.feature(CommonPackage.eINSTANCE.module_Iri).surround[oneSpace]
+	
+		val lcurly = terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.LCURLYTerminalRuleCall_3)
+//		val lcurly = terminologyGraph.regionFor.keyword("{")
 		
-		//val lcurly = terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.LCURLYTerminalRuleCall_3)
-		val lcurly = terminologyGraph.regionFor.keyword("{")
-		//val rcurly = terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.RCURLYTerminalRuleCall_5)
-		val rcurly = terminologyGraph.regionFor.keyword("}")
+		val rcurly = terminologyGraph.regionFor.ruleCall(terminologyGraphAccess.RCURLYTerminalRuleCall_5)
+//		val rcurly = terminologyGraph.regionFor.keyword("}")
+		
 		lcurly.prepend[oneSpace]
 		lcurly.append[newLine]
 		interior(lcurly, rcurly)[indent]
@@ -107,22 +121,25 @@ class OntologicalModelingLanguageFormatter extends AbstractFormatter2 {
 			annotations.format
 		}
 		
-		for (TerminologyBoxAxiom terminologyBoxAxioms : terminologyGraph.getTerminologyBoxAxioms()) {
-			terminologyBoxAxioms.format
+		for (TerminologyBoxAxiom boxAxiom : terminologyGraph.getBoxAxioms()) {
+			boxAxiom.format
 		}
 		
-		for (TerminologyBoxStatement boxStatements : terminologyGraph.getBoxStatements()) {
-			boxStatements.format
+		for (TerminologyBoxStatement boxStatement : terminologyGraph.getBoxStatements()) {
+			boxStatement.format
 		}
 	}
 	
+
 	def dispatch void format(Bundle bundle, extension IFormattableDocument document) {
-		bundle.prepend[newLine]
+		bundle.prepend[noSpace]
 			
-		//val lcurly = bundle.regionFor.ruleCall(terminologyGraphAccess.LCURLYTerminalRuleCall_3)
-		val lcurly = bundle.regionFor.keyword("{")
-		//val rcurly = bundle.regionFor.ruleCall(terminologyGraphAccess.RCURLYTerminalRuleCall_5)
-		val rcurly = bundle.regionFor.keyword("}")
+		val lcurly = bundle.regionFor.ruleCall(terminologyGraphAccess.LCURLYTerminalRuleCall_3)
+//		val lcurly = bundle.regionFor.keyword("{")
+		
+		val rcurly = bundle.regionFor.ruleCall(terminologyGraphAccess.RCURLYTerminalRuleCall_5)
+//		val rcurly = bundle.regionFor.keyword("}")
+		
 		lcurly.append[newLine]
 		interior(lcurly, rcurly)[indent]
 		
@@ -130,22 +147,32 @@ class OntologicalModelingLanguageFormatter extends AbstractFormatter2 {
 			annotations.format
 		}
 		
-		for (TerminologyBoxAxiom terminologyBoxAxioms : bundle.getTerminologyBoxAxioms()) {
-			terminologyBoxAxioms.format
+		for (TerminologyBoxAxiom boxAxiom : bundle.getBoxAxioms()) {
+			boxAxiom.format
 		}
 		
-		for (TerminologyBoxStatement boxStatements : bundle.getBoxStatements()) {
-			boxStatements.format
+		for (TerminologyBoxStatement boxStatement : bundle.getBoxStatements()) {
+			boxStatement.format
+		}
+		
+		for (TerminologyBundleAxiom bundleAxiom : bundle.getBundleAxioms()) {
+			bundleAxiom.format
+		}
+		
+		for (TerminologyBundleStatement bundleStatement : bundle.getBundleStatements()) {
+			bundleStatement.format
 		}
 	}
 	
 	def dispatch void format(DescriptionBox descriptionBox, extension IFormattableDocument document) {
-		descriptionBox.prepend[newLine]
+		descriptionBox.prepend[noSpace]
 			
-		//val lcurly = descriptionBox.regionFor.ruleCall(terminologyGraphAccess.LCURLYTerminalRuleCall_3)
-		val lcurly = descriptionBox.regionFor.keyword("{")
-		//val rcurly = descriptionBox.regionFor.ruleCall(terminologyGraphAccess.RCURLYTerminalRuleCall_5)
-		val rcurly = descriptionBox.regionFor.keyword("}")
+		val lcurly = descriptionBox.regionFor.ruleCall(terminologyGraphAccess.LCURLYTerminalRuleCall_3)
+//		val lcurly = descriptionBox.regionFor.keyword("{")
+		
+		val rcurly = descriptionBox.regionFor.ruleCall(terminologyGraphAccess.RCURLYTerminalRuleCall_5)
+//		val rcurly = descriptionBox.regionFor.keyword("}")
+		
 		lcurly.append[newLine]
 		interior(lcurly, rcurly)[indent]
 		
@@ -154,14 +181,25 @@ class OntologicalModelingLanguageFormatter extends AbstractFormatter2 {
 		}
 	}
 
+// The feature/keyword version produces undesirable results; the default is better although it doesn't collapse whitespace!
 	def dispatch void format(Aspect aspect, extension IFormattableDocument document) {
-		//aspect.regionFor.ruleCall(aspectAccess.ASPECT_TOKENTerminalRuleCall_0).append[oneSpace]
+		aspect.prepend[noSpace]
 		
-		aspect.prepend[newLine]
-		aspect.regionFor.keyword("aspect").append[oneSpace]
+		aspect.regionFor.ruleCall(aspectAccess.ASPECT_TOKENTerminalRuleCall_0).append[oneSpace]
+//		aspect.regionFor.keyword("aspect").append[oneSpace]
 		
-		//aspect.regionFor.ruleCall(aspectAccess.nameIDTerminalRuleCall_1_0).append[newLine]
-		aspect.regionFor.feature(OMLPackage.eINSTANCE.term_Name).prepend[oneSpace]
-		aspect.regionFor.feature(OMLPackage.eINSTANCE.term_Name).append[newLine]
+		aspect.regionFor.ruleCall(aspectAccess.nameIDTerminalRuleCall_1_0).append[newLine]
+//		aspect.regionFor.feature(TerminologiesPackage.eINSTANCE.term_Name).append[newLine]
+	}
+	
+// The feature/keyword version produces undesirable results; the default is better although it doesn't collapse whitespace!
+	def dispatch void format(TerminologyExtensionAxiom ax, extension IFormattableDocument document) {
+		ax.prepend[noSpace]
+		
+		ax.regionFor.ruleCall(terminologyExtensionAxiomAccess.EXTENDS_TOKENTerminalRuleCall_0).append[oneSpace]
+//		ax.regionFor.keyword("extends").append[oneSpace]
+		
+		ax.regionFor.ruleCall(terminologyExtensionAxiomAccess.extendedTerminologyTerminologyBoxReferenceParserRuleCall_1_0_1).append[newLine]
+//		ax.regionFor.feature(TerminologiesPackage.eINSTANCE.terminologyExtensionAxiom_ExtendedTerminology).append[newLine]
 	}
 }

@@ -26,33 +26,36 @@ import org.eclipse.xtext.naming.IQualifiedNameConverter
 import org.eclipse.xtext.scoping.impl.ImportNormalizer
 import org.eclipse.xtext.scoping.impl.ImportedNamespaceAwareLocalScopeProvider
 
-import jpl.imce.oml.specification.ecore.TerminologyBox
-import jpl.imce.oml.specification.ecore.TerminologyExtent
+import gov.nasa.jpl.imce.oml.terminologies.TerminologyBox
+import gov.nasa.jpl.imce.oml.common.Extent
 import jpl.imce.oml.specification.util.OMLImportNormalizer
-import jpl.imce.oml.specification.ecore.OMLPackage
 import org.eclipse.xtext.scoping.IScope
-import jpl.imce.oml.specification.ecore.Annotation
-import jpl.imce.oml.specification.ecore.AspectSpecializationAxiom
-import jpl.imce.oml.specification.ecore.BundledTerminologyAxiom
-import jpl.imce.oml.specification.ecore.ConceptDesignationTerminologyAxiom
-import jpl.imce.oml.specification.ecore.ConceptSpecializationAxiom
-import jpl.imce.oml.specification.ecore.DataRelationshipFromEntity
-import jpl.imce.oml.specification.ecore.DataRelationshipFromStructure
-import jpl.imce.oml.specification.ecore.DataRelationshipToScalar
-import jpl.imce.oml.specification.ecore.DataRelationshipToStructure
-import jpl.imce.oml.specification.ecore.DisjointUnionOfConceptsAxiom
-import jpl.imce.oml.specification.ecore.EntityRelationship
-import jpl.imce.oml.specification.ecore.EntityRestrictionAxiom
-import jpl.imce.oml.specification.ecore.EntityScalarDataPropertyRestrictionAxiom
-import jpl.imce.oml.specification.ecore.EntityScalarDataPropertyExistentialRestrictionAxiom
-import jpl.imce.oml.specification.ecore.EntityScalarDataPropertyUniversalRestrictionAxiom
-import jpl.imce.oml.specification.ecore.ReifiedRelationshipSpecializationAxiom
-import jpl.imce.oml.specification.ecore.RestrictedDataRange
-import jpl.imce.oml.specification.ecore.RootConceptTaxonomyAxiom
-import jpl.imce.oml.specification.ecore.ScalarOneOfLiteralAxiom
-import jpl.imce.oml.specification.ecore.SpecificDisjointConceptAxiom
-import jpl.imce.oml.specification.ecore.TerminologyExtensionAxiom
-import jpl.imce.oml.specification.ecore.TerminologyNestingAxiom
+import gov.nasa.jpl.imce.oml.common.Annotation
+import gov.nasa.jpl.imce.oml.terminologies.AspectSpecializationAxiom
+import gov.nasa.jpl.imce.oml.bundles.BundledTerminologyAxiom
+import gov.nasa.jpl.imce.oml.graphs.ConceptDesignationTerminologyAxiom
+import gov.nasa.jpl.imce.oml.terminologies.ConceptSpecializationAxiom
+import gov.nasa.jpl.imce.oml.terminologies.DataRelationshipFromEntity
+import gov.nasa.jpl.imce.oml.terminologies.DataRelationshipFromStructure
+import gov.nasa.jpl.imce.oml.terminologies.DataRelationshipToScalar
+import gov.nasa.jpl.imce.oml.terminologies.DataRelationshipToStructure
+import gov.nasa.jpl.imce.oml.bundles.DisjointUnionOfConceptsAxiom
+import gov.nasa.jpl.imce.oml.terminologies.EntityRelationship
+import gov.nasa.jpl.imce.oml.terminologies.EntityRestrictionAxiom
+import gov.nasa.jpl.imce.oml.terminologies.EntityScalarDataPropertyRestrictionAxiom
+import gov.nasa.jpl.imce.oml.terminologies.EntityScalarDataPropertyExistentialRestrictionAxiom
+import gov.nasa.jpl.imce.oml.terminologies.EntityScalarDataPropertyUniversalRestrictionAxiom
+import gov.nasa.jpl.imce.oml.terminologies.ReifiedRelationshipSpecializationAxiom
+import gov.nasa.jpl.imce.oml.terminologies.RestrictedDataRange
+import gov.nasa.jpl.imce.oml.bundles.RootConceptTaxonomyAxiom
+import gov.nasa.jpl.imce.oml.terminologies.ScalarOneOfLiteralAxiom
+import gov.nasa.jpl.imce.oml.bundles.SpecificDisjointConceptAxiom
+import gov.nasa.jpl.imce.oml.terminologies.TerminologyExtensionAxiom
+import gov.nasa.jpl.imce.oml.graphs.TerminologyNestingAxiom
+import gov.nasa.jpl.imce.oml.common.CommonPackage
+import gov.nasa.jpl.imce.oml.terminologies.TerminologiesPackage
+import gov.nasa.jpl.imce.oml.bundles.BundlesPackage
+import gov.nasa.jpl.imce.oml.graphs.GraphsPackage
 
 class OMLImportedNamespaceAwareLocalScopeProvider extends ImportedNamespaceAwareLocalScopeProvider {
 	
@@ -61,14 +64,14 @@ class OMLImportedNamespaceAwareLocalScopeProvider extends ImportedNamespaceAware
 	override def List<ImportNormalizer> getImportedNamespaceResolvers(EObject context, boolean ignoreCase) {
 		val res = new ArrayList<ImportNormalizer>();
 		switch context {
-			TerminologyExtent:
+			Extent:
 				for (ap : context.annotationProperties)
 					res.add(new OMLImportNormalizer(qnc.toQualifiedName(ap.iri), ap.abbrevIRI))
 			TerminologyBox: {
 				for (ap : context.extent.annotationProperties) {
 					res.add(new OMLImportNormalizer(qnc.toQualifiedName(ap.iri), ap.abbrevIRI))
 				}
-				for (e : context.terminologyBoxAxioms) {
+				for (e : context.boxAxioms) {
 					res.add(new OMLImportNormalizer(qnc.toQualifiedName(e.target.iri()), e.target.name))
 				}
 			}
@@ -81,24 +84,22 @@ class OMLImportedNamespaceAwareLocalScopeProvider extends ImportedNamespaceAware
 	
 	@Inject extension OMLScopeExtensions
 	
-	val epackage = OMLPackage.eINSTANCE
-	
  	override getScope(EObject context, EReference reference) {
  		var IScope scope = null
 		switch context {
  			Annotation:
- 				if (reference == epackage.annotation_Property)
+ 				if (reference == CommonPackage.eINSTANCE.annotation_Property)
 					scope = scope_Annotation_property(context, reference)
 					
 			EntityRelationship:
-				if (reference == epackage.entityRelationship_Source ||
-					reference == epackage.entityRelationship_Target)
+				if (reference == TerminologiesPackage.eINSTANCE.entityRelationship_Source ||
+					reference == TerminologiesPackage.eINSTANCE.entityRelationship_Target)
 					scope = scope_EntityRelationship(context)
 					
 			AspectSpecializationAxiom:
-				if (reference == epackage.aspectSpecializationAxiom_SubEntity)
+				if (reference == TerminologiesPackage.eINSTANCE.aspectSpecializationAxiom_SubEntity)
 					scope = scope_AspectSpecializationAxiom_subEntity(context)
-				else if (reference == epackage.aspectSpecializationAxiom_SuperAspect)
+				else if (reference == TerminologiesPackage.eINSTANCE.aspectSpecializationAxiom_SuperAspect)
 					scope = scope_AspectSpecializationAxiom_superAspect(context)
 			ConceptSpecializationAxiom:
 				{}
@@ -136,20 +137,20 @@ class OMLImportedNamespaceAwareLocalScopeProvider extends ImportedNamespaceAware
 				{}
 				
 			BundledTerminologyAxiom:
-				if (reference == epackage.bundledTerminologyAxiom_BundledTerminology)
+				if (reference == BundlesPackage.eINSTANCE.bundledTerminologyAxiom_BundledTerminology)
 					scope = scope_BundledTerminologyAxiom_bundledTerminology(context)
 			ConceptDesignationTerminologyAxiom:
-				if (reference == epackage.conceptDesignationTerminologyAxiom_DesignatedTerminology)
+				if (reference == GraphsPackage.eINSTANCE.conceptDesignationTerminologyAxiom_DesignatedTerminology)
 					scope = scope_ConceptDesignationTerminologyAxiom_designatedTerminology(context)
-				else if (reference == epackage.conceptDesignationTerminologyAxiom_DesignatedConcept)
+				else if (reference == GraphsPackage.eINSTANCE.conceptDesignationTerminologyAxiom_DesignatedConcept)
 					scope = scope_ConceptDesignationTerminologyAxiom_designatedConcept(context)
 			TerminologyExtensionAxiom:
-				if (reference == epackage.terminologyExtensionAxiom_ExtendedTerminology)
+				if (reference == TerminologiesPackage.eINSTANCE.terminologyExtensionAxiom_ExtendedTerminology)
 					scope = scope_TerminologyExtensionAxiom_extendedTerminology(context, reference)
 			TerminologyNestingAxiom:
 				{}
 		} 
-		if (null != scope)
+		if (null !== scope)
 			scope
 		else
 			super.getScope(context, reference)

@@ -1,10 +1,12 @@
 if (name.endsWith(".tests")) {
 	sourceSets {
 		main {
+			output.classesDir = 'build/target/classes/main/'
 			java.srcDirs = []
 			resources.srcDirs = []
 		}
 		test {
+			output.classesDir = 'build/target/classes/test/'
 			java.srcDirs = ['src', 'src-gen']
 			resources.srcDirs = ['resources', 'src', 'src-gen']
 			xtendOutputDir = 'xtend-gen'
@@ -23,24 +25,6 @@ if (name.endsWith(".tests")) {
 		test {
 			java.srcDirs = []
 			resources.srcDirs = []
-		}
-	}
-	
-} else if (!name.endsWith(".feature") &&
-		   !name.endsWith(".doc")) {
-	
-	sourceSets {
-		main {
-			java.srcDirs = ['src', 'src-gen']
-			resources.srcDirs = ['src', 'src-gen']
-			xtendOutputDir = 'xtend-gen'
-		}
-		test {
-			java.srcDirs = []
-			resources.srcDirs = []
-		}
-		all {
-			resources.exclude '**/*.g', '**/*.xtext', '**/*.mwe2', '**/*.xtend', '**/*._trace'
 		}
 	}
 	

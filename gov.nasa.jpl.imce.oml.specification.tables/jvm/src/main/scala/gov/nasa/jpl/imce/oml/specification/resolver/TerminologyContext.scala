@@ -32,7 +32,7 @@ import scalax.collection.GraphPredef._
 import scalax.collection.immutable.Graph
 
 case class TerminologyContext private[resolver]
-(extent: resolver.api.TerminologyExtent,
+(extent: resolver.api.Extent,
  g: Graph[resolver.api.Module, TerminologyEdge] = Graph[resolver.api.Module, TerminologyEdge]()) {
 
   def topologicalOrder()
@@ -148,9 +148,7 @@ object TerminologyContext {
   (factory: resolver.api.OMLResolvedFactory)
   : TerminologyContext
   = TerminologyContext(
-    factory.createTerminologyExtent(
+    factory.createExtent(
       annotationProperties = TreeSet.empty[resolver.api.AnnotationProperty],
-      terminologyGraphs = TreeSet.empty[resolver.api.TerminologyGraph],
-      bundles = TreeSet.empty[resolver.api.Bundle],
-      descriptions = TreeSet.empty[resolver.api.DescriptionBox]))
+      modules = TreeSet.empty[resolver.api.Module]))
 }

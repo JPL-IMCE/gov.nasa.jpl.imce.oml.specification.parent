@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.antlr.runtime;bundle-version="3.2.0";visibility:=reexport,
  org.eclipse.xtext.util;visibility:=reexport,
  org.eclipse.xtend.lib;visibility:=reexport,
- jpl.imce.oml.specification.ecore;bundle-version="0.2.0";visibility:=reexport
+ jpl.imce.oml.specification.ecore;visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: jpl.imce.oml.specification,
  jpl.imce.oml.specification.scoping,

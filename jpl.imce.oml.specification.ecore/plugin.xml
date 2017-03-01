@@ -23,19 +23,59 @@
 <plugin>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated OML -->
+      <!-- @generated OMLProvenanceOTI -->
       <package
-            uri="jpl.imce.oml.specification.ecore"
-            class="jpl.imce.oml.specification.ecore.OMLPackage"
-            genModel="model/OMLSpecification.xcore"/>
+            uri="http://imce.jpl.nasa.gov/oml/provenance/oti"
+            class="gov.nasa.jpl.imce.oml.provenance.oti.OtiPackage"
+            genModel="model/OMLProvenanceOTI.xcore"/>
    </extension>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated OMLProvenanceOTI -->
+      <!-- @generated OMLTerminologies -->
       <package
-            uri="gov.nasa.jpl.imce.oml.provenance.oti"
-            class="gov.nasa.jpl.imce.oml.provenance.oti.OMLPPackage"
-            genModel="model/OMLProvenanceOTI.xcore"/>
+            uri="http://imce.jpl.nasa.gov/oml/terminologies"
+            class="gov.nasa.jpl.imce.oml.terminologies.TerminologiesPackage"
+            genModel="model/OMLTerminologies.xcore"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated OMLCommon -->
+      <package
+            uri="http://imce.jpl.nasa.gov/oml/common"
+            class="gov.nasa.jpl.imce.oml.common.CommonPackage"
+            genModel="model/OMLCommon.xcore"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated OMLDescriptions -->
+      <package
+            uri="http://imce.jpl.nasa.gov/oml/descriptions"
+            class="gov.nasa.jpl.imce.oml.descriptions.DescriptionsPackage"
+            genModel="model/OMLDescriptions.xcore"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated OMLBundles -->
+      <package
+            uri="http://imce.jpl.nasa.gov/oml/bundles"
+            class="gov.nasa.jpl.imce.oml.bundles.BundlesPackage"
+            genModel="model/OMLBundles.xcore"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated FunctionalMetamodel -->
+      <package
+            uri="http://imce.jpl.nasa.gov/fm"
+            class="gov.nasa.jpl.imce.fm.FmPackage"
+            genModel="model/FunctionalMetamodel.xcore"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated OMLGraphs -->
+      <package
+            uri="http://imce.jpl.nasa.gov/oml/graphs"
+            class="gov.nasa.jpl.imce.oml.graphs.GraphsPackage"
+            genModel="model/OMLGraphs.xcore"/>
    </extension>
 
 </plugin>

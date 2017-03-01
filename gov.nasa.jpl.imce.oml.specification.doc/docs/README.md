@@ -112,5 +112,4 @@ the organization of this document parallels that of the [OWL2 Structural Specifi
 - [Ontological Modeling](OntologicalModeling.md) corresponds to the overview of [OWL2-DL Ontologies] 
   that of the relationship with relevant modeling standards: [OMG UML 2.5] and [OMG SysML 1.4].
 
-- [RelationshipEntity Relationships: Reified and Unreified](
-
+- [RelationshipEntity Relationships: Reified and Unreified](EntityRelationships-Reified-and-Unreified.md)

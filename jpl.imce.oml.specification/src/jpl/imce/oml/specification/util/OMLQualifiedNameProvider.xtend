@@ -18,11 +18,11 @@
 package jpl.imce.oml.specification.util
 
 import com.google.inject.Inject
-import jpl.imce.oml.specification.ecore.Resource
+import gov.nasa.jpl.imce.oml.common.Resource
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameConverter
 import org.eclipse.xtext.naming.QualifiedName
-import jpl.imce.oml.specification.ecore.AnnotationProperty
+import gov.nasa.jpl.imce.oml.common.AnnotationProperty
 
 class OMLQualifiedNameProvider extends DefaultDeclarativeQualifiedNameProvider {
 

@@ -20,16 +20,12 @@ package gov.nasa.jpl.imce.oml.specification.scala.generators
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Paths
-import java.util.Map
+import java.util.List
 import java.util.regex.Pattern
-import jpl.imce.oml.specification.ecore.OMLPackage
-import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.util.EcoreUtil
-import org.eclipse.xtext.resource.XtextResourceSet
 
 class OMLSpecificationTablesGenerator extends OMLUtilities {
 	
@@ -42,75 +38,42 @@ class OMLSpecificationTablesGenerator extends OMLUtilities {
 	}
 	
 	def generate(String targetDir) {
-		val omlXcore = "/model/OMLSpecification.xcore"
-		val oml2otiXcore = "/model/OMLProvenanceOTI.xcore"
-		
-		val set = createXcoreResourceSet(
-			[Map<URI,URI> uriMap | 
-			uriMap.put(
-				URI.createURI("platform:/resource/jpl.imce.oml.specification.ecore"+omlXcore),
-				URI.createURI(OMLPackage.getResource(omlXcore).toURI.toString))
-			uriMap.put(
-				URI.createURI("platform:/resource/jpl.imce.oml.specification.ecore"+oml2otiXcore),
-				URI.createURI(OMLPackage.getResource(oml2otiXcore).toURI.toString))
-				])
-		
-		
-		generateTables(set, targetDir)
-		generateProvenance(set, targetDir)
-	}
+		val bundlePath = Paths.get(targetDir)
 	
-	def generateTables(XtextResourceSet set, String targetDir) {
-		val xcoreFile = "/model/OMLSpecification.xcore"
-      	val sourceURI = URI.createPlatformResourceURI("/jpl.imce.oml.specification.ecore"+xcoreFile, false)
-      	val sourceResource = set.getResource(sourceURI, true)
-      	EcoreUtil.resolveAll(set)
-      	val ePackage = sourceResource.getContents().filter(EPackage).get(0)
-      	val bundlePath = Paths.get(targetDir)
-		val targetFolder = "shared/src/main/scala/gov/nasa/jpl/imce/oml/specification/tables"
-		val targetPath = bundlePath.resolve(targetFolder)
-		targetPath.toFile.mkdirs	
-					
+      	val oml_Folder = bundlePath.resolve("shared/src/main/scala/gov/nasa/jpl/imce/oml/specification/tables")
+		oml_Folder.toFile.mkdirs	
+		
       	generate(
-      		ePackage, 
-      		targetPath.toAbsolutePath.toString, 
+      		#[c, t, g, b, d], 
+      		oml_Folder.toAbsolutePath.toString, 
       		"gov.nasa.jpl.imce.oml.specification.tables",
-      		"OMLSpecificationTables"
-      	)      	
-	}
-	
-	def generateProvenance(XtextResourceSet set, String targetDir) {
-		val sourceFile = "/jpl.imce.oml.specification.ecore/model/OMLProvenanceOTI.xcore"
-      	val sourceURI = URI.createPlatformResourceURI(sourceFile, false)
-      	val sourceResource = set.getResource(sourceURI, true)
-      	EcoreUtil.resolveAll(sourceResource)
-      	val ePackage = sourceResource.getContents().filter(EPackage).get(0)
-      	
-      	val bundlePath = Paths.get(targetDir)
-      	val targetFolder = "shared/src/main/scala/gov/nasa/jpl/imce/oml/provenance/oti"
-		val targetPath = bundlePath.resolve(targetFolder)
-		targetPath.toFile.mkdirs
+      		"OMLSpecificationTables")
+      		
+      	val oml2oti_Folder = bundlePath.resolve("shared/src/main/scala/gov/nasa/jpl/imce/oml/provenance/oti")
+		oml2oti_Folder.toFile.mkdirs
 		
       	generate(
-      		ePackage, 
-      		targetPath.toAbsolutePath.toString, 
-      		"gov.nasa.jpl.imce.oml.provenance.oti.tables", 
+      		#[oml2oti], 
+      		oml2oti_Folder.toAbsolutePath.toString, 
+      		"gov.nasa.jpl.imce.oml.provenance.oti", 
       		"OML2OTIProvenanceTables"
       	)
-    }
-    
-	def generate(EPackage ePackage, String targetFolder, String packageQName, String tableName) {
+	}
+	
+	def generate(List<EPackage> ePackages, String targetFolder, String packageQName, String tableName) {
 		val packageFile = new FileOutputStream(new File(targetFolder + File::separator + "package.scala"))
-		packageFile.write(generatePackageFile(ePackage, packageQName).bytes)
+		packageFile.write(generatePackageFile(ePackages, packageQName).bytes)
 		val tablesFile = new FileOutputStream(new File(targetFolder + File::separator + tableName + ".scala"))
-		tablesFile.write(generateTablesFile(ePackage, packageQName, tableName).bytes)
-		for(eClass : ePackage.EClassifiers.filter(EClass).filter[isFunctionalAPI])  {
+		tablesFile.write(generateTablesFile(ePackages, packageQName, tableName).bytes)
+		for(eClass : ePackages.map[EClassifiers].flatten.filter(EClass).filter[isFunctionalAPI])  {
 			val classFile = new FileOutputStream(new File(targetFolder + File::separator + eClass.name + ".scala"))
 			classFile.write(generateClassFile(eClass, packageQName).bytes)
 		}
 	}
 	
-	def String generateTablesFile(EPackage ePackage, String packageQName, String tableName) '''
+	def String generateTablesFile(List<EPackage> ePackages, String packageQName, String tableName) {
+		val eClasses = ePackages.map[EClassifiers].flatten.filter(EClass).filter[isFunctionalAPI && !isInterface && !isValueTable].sortWith(new OMLTableCompare())
+	'''
 		«copyright»
 
 		package «packageQName»
@@ -131,23 +94,23 @@ class OMLSpecificationTablesGenerator extends OMLUtilities {
 		import scala.Predef.ArrowAssoc
 		«ENDIF»
 		
-		case class «tableName» private[tables]
+		case class «tableName»
 		«IF 'OMLSpecificationTables' == tableName»
-		«FOR eClass : ePackage.EClassifiers.filter(EClass).filter[isFunctionalAPI && !isInterface && !isValueTable].sortWith(new OMLTableCompare()) BEFORE "(\n  " SEPARATOR ",\n  " AFTER ","»«eClass.tableVariable»«ENDFOR»
+		«FOR eClass : eClasses BEFORE "(\n  " SEPARATOR ",\n  " AFTER ","»«eClass.tableVariable»«ENDFOR»
 		  annotations: Map[AnnotationProperty, Seq[AnnotationEntry]] = Map.empty)
 		«ELSE»
-		«FOR eClass : ePackage.EClassifiers.filter(EClass).filter[isFunctionalAPI && !isInterface && !isValueTable].sortWith(new OMLTableCompare()) BEFORE "(\n  " SEPARATOR ",\n  " AFTER "\n)"»«eClass.tableVariable»«ENDFOR» 
+		«FOR eClass : eClasses BEFORE "(\n  " SEPARATOR ",\n  " AFTER "\n)"»«eClass.tableVariable»«ENDFOR» 
 		«ENDIF»
 		{
-		  «FOR eClass : ePackage.EClassifiers.filter(EClass).filter[isFunctionalAPI && !isInterface && !isValueTable].sortWith(new OMLTableCompare())»
+		  «FOR eClass : eClasses»
 		  «eClass.tableReader(tableName)»
 		  «ENDFOR»
 		  
 		  def isEmpty: Boolean
 		  «IF 'OMLSpecificationTables' == tableName»
-		  «FOR eClass : ePackage.EClassifiers.filter(EClass).filter[isFunctionalAPI && !isInterface && !isValueTable].sortWith(new OMLTableCompare()) BEFORE "= " SEPARATOR " &&\n  " AFTER " &&\n  annotations.isEmpty"»«eClass.tableVariableName».isEmpty«ENDFOR»
+		  «FOR eClass : eClasses BEFORE "= " SEPARATOR " &&\n  " AFTER " &&\n  annotations.isEmpty"»«eClass.tableVariableName».isEmpty«ENDFOR»
 		  «ELSE»
-		  «FOR eClass : ePackage.EClassifiers.filter(EClass).filter[isFunctionalAPI && !isInterface && !isValueTable].sortWith(new OMLTableCompare()) BEFORE "= " SEPARATOR " &&\n  "»«eClass.tableVariableName».isEmpty«ENDFOR»
+		  «FOR eClass : eClasses BEFORE "= " SEPARATOR " &&\n  "»«eClass.tableVariableName».isEmpty«ENDFOR»
 		  «ENDIF»
 		}
 		
@@ -177,23 +140,23 @@ class OMLSpecificationTablesGenerator extends OMLUtilities {
 		      Success(omlTables)
 		    }
 		
-		  private[tables] def mergeTables
+		  def mergeTables
 		  (t1: «tableName», t2: «tableName»)
 		  : «tableName»
 		  «IF 'OMLSpecificationTables' == tableName»
-		  = «FOR eClass : ePackage.EClassifiers.filter(EClass).filter[isFunctionalAPI && !isInterface && !isValueTable].sortWith(new OMLTableCompare()) BEFORE tableName + "(\n    " SEPARATOR ",\n    " AFTER ",\n    annotations = t1.annotations ++ t2.annotations)"»«eClass.tableVariableName» = t1.«eClass.tableVariableName» ++ t2.«eClass.tableVariableName»«ENDFOR»
+		  = «FOR eClass : eClasses BEFORE tableName + "(\n    " SEPARATOR ",\n    " AFTER ",\n    annotations = t1.annotations ++ t2.annotations)"»«eClass.tableVariableName» = t1.«eClass.tableVariableName» ++ t2.«eClass.tableVariableName»«ENDFOR»
 		  «ELSE» 
-		  = «FOR eClass : ePackage.EClassifiers.filter(EClass).filter[isFunctionalAPI && !isInterface && !isValueTable].sortWith(new OMLTableCompare()) BEFORE tableName + "(\n    " SEPARATOR ",\n    " AFTER ")"»«eClass.tableVariableName» = t1.«eClass.tableVariableName» ++ t2.«eClass.tableVariableName»«ENDFOR» 
+		  = «FOR eClass : eClasses BEFORE tableName + "(\n    " SEPARATOR ",\n    " AFTER ")"»«eClass.tableVariableName» = t1.«eClass.tableVariableName» ++ t2.«eClass.tableVariableName»«ENDFOR» 
 		  «ENDIF»
 		  
-		  private[tables] def readZipArchive
+		  def readZipArchive
 		  (zipFile: ZipFile)
 		  (tables: «tableName», ze: ZipArchiveEntry)
 		  : «tableName»
 		  = {
 		  	val is = zipFile.getInputStream(ze)
 		  	ze.getName match {
-		  	  «FOR eClass : ePackage.EClassifiers.filter(EClass).filter[isFunctionalAPI && !isInterface && !isValueTable].sortWith(new OMLTableCompare())»
+		  	  «FOR eClass : eClasses»
 		  	  case «eClass.name»Helper.TABLE_JSON_FILENAME =>
 		  	    tables.«eClass.tableReaderName»(is)
 		      «ENDFOR»
@@ -229,7 +192,7 @@ class OMLSpecificationTablesGenerator extends OMLUtilities {
 		  
 		  	  zos.setMethod(java.util.zip.ZipOutputStream.DEFLATED)
 		  
-		      «FOR eClass : ePackage.EClassifiers.filter(EClass).filter[isFunctionalAPI && !isInterface && !isValueTable].sortWith(new OMLTableCompare())»
+		      «FOR eClass : eClasses»
 		      zos.putNextEntry(new java.util.zip.ZipEntry(«eClass.name»Helper.TABLE_JSON_FILENAME))
 		      tables.«eClass.tableVariableName».foreach { t =>
 		         val line = «eClass.name»Helper.toJSON(t)+"\n"
@@ -262,6 +225,7 @@ class OMLSpecificationTablesGenerator extends OMLUtilities {
 		
 		}
 	'''
+	}
 	
 	static def String tableReaderName(EClass eClass)
 	  '''read«pluralize(eClass.name)»'''
@@ -302,7 +266,7 @@ class OMLSpecificationTablesGenerator extends OMLUtilities {
 		}
 	}
 	
-	def String generatePackageFile(EPackage ePackage, String packageQName) '''
+	def String generatePackageFile(List<EPackage> ePackages, String packageQName) '''
 		«copyright»
 
 		package «packageQName.substring(0, packageQName.lastIndexOf('.'))»
@@ -313,7 +277,7 @@ class OMLSpecificationTablesGenerator extends OMLUtilities {
 		import scala.Predef.String
 		
 		package object «packageQName.substring(packageQName.lastIndexOf('.')+1)» {
-			«FOR type : ePackage.EClassifiers.filter(EDataType).filter[t|!(t instanceof EEnum)].sortBy[name]»
+			«FOR type : ePackages.map[EClassifiers].flatten.filter(EDataType).filter[t|!(t instanceof EEnum)].sortBy[name]»
 				type «type.name» = String
 		  	«ENDFOR»
 		  	
@@ -321,7 +285,7 @@ class OMLSpecificationTablesGenerator extends OMLUtilities {
 		  : Seq[T]
 		  = io.Source.fromInputStream(is).getLines.map(fromJSon).to[Seq]
 		  
-		  «FOR eClass: ePackage.EClassifiers.filter(EClass).filter[isFunctionalAPIWithOrderingKeys].sortBy[name]»
+		  «FOR eClass: ePackages.map[EClassifiers].flatten.filter(EClass).filter[isFunctionalAPIWithOrderingKeys].sortBy[name]»
 		  implicit def «eClass.name.toFirstLower»Ordering
 		  : scala.Ordering[«eClass.name»]
 		  = new scala.Ordering[«eClass.name»] {

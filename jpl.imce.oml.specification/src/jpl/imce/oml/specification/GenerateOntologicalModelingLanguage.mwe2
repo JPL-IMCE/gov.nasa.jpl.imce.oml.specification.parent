@@ -65,7 +65,11 @@ Workflow {
 		language = StandardLanguage {
 			name = "jpl.imce.oml.specification.OntologicalModelingLanguage"
 			fileExtensions = "oml"
-			referencedResource = "platform:/resource/jpl.imce.oml.specification.ecore/model/OMLSpecification.xcore"
+			referencedResource = "platform:/resource/jpl.imce.oml.specification.ecore/model/OMLCommon.xcore"
+			referencedResource = "platform:/resource/jpl.imce.oml.specification.ecore/model/OMLTerminologies.xcore"
+			referencedResource = "platform:/resource/jpl.imce.oml.specification.ecore/model/OMLGraphs.xcore"
+			referencedResource = "platform:/resource/jpl.imce.oml.specification.ecore/model/OMLBundles.xcore"
+			referencedResource = "platform:/resource/jpl.imce.oml.specification.ecore/model/OMLDescriptions.xcore"
 				
 			grammarUri = "platform:/resource/jpl.imce.oml.specification/src/jpl/imce/oml/specification/OntologicalModelingLanguage.xtext"
 			

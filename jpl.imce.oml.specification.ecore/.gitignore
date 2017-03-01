@@ -3,3 +3,10 @@
 /src-gen/**/*.ecore
 /build/
 /target/
+/bin/
+/.settings/org.eclipse.emf.codegen.ecore.xtext.GenModelSupport.prefs
+/.settings/org.eclipse.emf.ecore.xcore.Xcore.prefs
+/.settings/org.eclipse.jdt.core.prefs
+/.settings/org.eclipse.xtend.core.Xtend.prefs
+/.settings/org.eclipse.xtext.ecore.EcoreSupport.prefs
+/.settings/org.eclipse.xtext.java.Java.prefs

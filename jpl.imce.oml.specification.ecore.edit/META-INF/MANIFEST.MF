@@ -8,9 +8,17 @@ Bundle-Activator: jpl.imce.oml.specification.ecore.edit.provider.OMLEditPlugin$I
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: jpl.imce.oml.specification.ecore.edit.provider,
+Export-Package: gov.nasa.jpl.imce.oml.common.provider,
+ gov.nasa.jpl.imce.oml.bundles.provider,
+ gov.nasa.jpl.imce.oml.terminologies.provider,
+ gov.nasa.jpl.imce.oml.extents.provider,
+ gov.nasa.jpl.imce.oml.graphs.provider,
+ gov.nasa.jpl.imce.oml.descriptions.provider,
+ gov.nasa.jpl.imce.fm.provider,
+ jpl.imce.oml.specification.ecore.edit.provider,
  jpl.imce.oml.specification.ecore.provider
 Require-Bundle: org.eclipse.emf.edit;visibility:=reexport,
+ jpl.imce.oml.specification.ecore.edit;visibility:=reexport,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.core.runtime,
  jpl.imce.oml.specification.ecore;visibility:=reexport

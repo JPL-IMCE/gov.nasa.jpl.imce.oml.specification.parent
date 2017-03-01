@@ -1,4 +1,5 @@
-@GenModel(modelName="OMLProvenance", prefix="OMLP", copyrightText="
+@Ecore(nsPrefix="oml2oti", nsURI="http://imce.jpl.nasa.gov/oml/provenance/oti")
+@GenModel(copyrightText="
 Copyright 2016 California Institute of Technology (\"Caltech\").
 U.S. Government sponsorship acknowledged.
 
@@ -13,7 +14,23 @@ distributed under the License is distributed on an \"AS IS\" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-")
+", bundleManifest="false",
+   childCreationExtenders="true",
+   complianceLevel="8.0",
+   featureDelegation="None",
+   modelPluginVariables="org.eclipse.xtext.xbase.lib org.eclipse.emf.ecore.xcore.lib org.eclipse.emf.cdo",
+   rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl",
+   rootExtendsInterface="org.eclipse.emf.cdo.CDOObject",
+   modelDirectory="jpl.imce.oml.specification.ecore/build/xcore/main/",
+   modelName="OML2OTI")
+  
+// If commented, it is possible to build cleanly with 'gradle :generateXtext'
+// If uncommented, 'gradle :generateXtext' will have several java.io.IOExceptions like these:
+// The path '.../plugin.properties' is unmapped
+// The path '.../build.properties' is unmapped
+// The path '.../plugin.xml' is unmapped
+// @GenModel(modelPluginID="jpl.imce.oml.specification.ecore")
+ 
 package gov.nasa.jpl.imce.oml.provenance.oti
 
 /*

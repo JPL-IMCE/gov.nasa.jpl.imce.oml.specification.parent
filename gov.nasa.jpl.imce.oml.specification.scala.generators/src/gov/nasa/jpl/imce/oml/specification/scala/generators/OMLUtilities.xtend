@@ -24,60 +24,19 @@ import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.ENamedElement
 import org.eclipse.emf.ecore.EOperation
-import org.eclipse.emf.ecore.EReference
-import org.eclipse.emf.ecore.ETypedElement
-import org.eclipse.xtext.resource.XtextResourceSet
-import org.eclipse.emf.ecore.plugin.EcorePlugin
-import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.EcorePackage
-import org.eclipse.emf.ecore.xml.namespace.XMLNamespacePackage
-import org.eclipse.emf.ecore.xml.type.XMLTypePackage
-import org.eclipse.xtext.resource.XtextResource
-import java.util.Map
-import org.eclipse.xtext.xbase.lib.Procedures.Procedure1
-import org.eclipse.emf.ecore.xcore.XcoreStandaloneSetup
-import org.eclipse.xtext.xbase.XExpression
-import org.eclipse.emf.ecore.xcore.mappings.XcoreMapper
-import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.xtext.xbase.XFeatureCall
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.emf.ecore.EPackage
+import org.eclipse.emf.ecore.EReference
+import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.ecore.ETypedElement
+import org.eclipse.emf.ecore.xcore.mappings.XcoreMapper
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import org.eclipse.xtext.xbase.XExpression
+import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.XMemberFeatureCall
+import jpl.imce.oml.specification.ecore.extensions.OMLXcorePackages
 
-class OMLUtilities {
-		
-	static def XtextResourceSet createXcoreResourceSet(Procedure1<Map<URI,URI>> standaloneURIMapInitializer) {
-		val set = new XtextResourceSet();
-		val Map<URI, URI> uriMap = set.getURIConverter().getURIMap()
-		if (null === EcorePlugin.workspaceRoot) {
-			XcoreStandaloneSetup.doSetup()
-			uriMap.putAll(EcorePlugin.computePlatformURIMap(false))
-			uriMap.put(
-				URI.createURI("platform:/resource/org.eclipse.emf.ecore/model/Ecore.ecore"),
-				URI.createURI(EcorePackage.getResource("/model/Ecore.ecore").toURI.toString))
-			uriMap.put(
-				URI.createURI("platform:/resource/org.eclipse.emf.ecore/model/Ecore.genmodel"),
-				URI.createURI(EcorePackage.getResource("/model/Ecore.genmodel").toURI.toString))
-			uriMap.put(
-				URI.createURI("platform:/resource/org.eclipse.emf.ecore/model/XMLNamespace.ecore"),
-				URI.createURI(XMLNamespacePackage.getResource("/model/XMLNamespace.ecore").toURI.toString))
-			uriMap.put(
-				URI.createURI("platform:/resource/org.eclipse.emf.ecore/model/XMLNamespace.genmodel"),
-				URI.createURI(XMLNamespacePackage.getResource("/model/XMLNamespace.genmodel").toURI.toString))
-			uriMap.put(
-				URI.createURI("platform:/resource/org.eclipse.emf.ecore/model/XMLType.ecore"),
-				URI.createURI(XMLTypePackage.getResource("/model/XMLType.ecore").toURI.toString))
-			uriMap.put(
-				URI.createURI("platform:/resource/org.eclipse.emf.ecore/model/XMLType.genmodel"),
-				URI.createURI(XMLTypePackage.getResource("/model/XMLType.genmodel").toURI.toString))
-			standaloneURIMapInitializer.apply(uriMap)
-		} else {
-			uriMap.putAll(EcorePlugin.computePlatformURIMap(true))
-		}
-		set.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE)
-		set
-	}
-	
+class OMLUtilities extends OMLXcorePackages {
+
 	static def String queryResolverName(EOperation op, String typePrefix) {
 		val kind = "def"
 		val decl = if (null !== op.getEAnnotation("http://imce.jpl.nasa.gov/oml/Override")) "override "+kind else kind
@@ -141,7 +100,7 @@ class OMLUtilities {
 			case "NamespacePrefix": "gov.nasa.jpl.imce.oml.specification.tables.NamespacePrefix"
 			case "Pattern": "gov.nasa.jpl.imce.oml.specification.tables.Pattern"
 			case "UUID": "java.util.UUID"
-			case "TerminologyGraphKind": "gov.nasa.jpl.imce.oml.specification.tables.TerminologyGraphKind"
+			case "TerminologyKind": "gov.nasa.jpl.imce.oml.specification.tables.TerminologyKind"
 			default: "resolver.api."+type.name
 		}
 	}
@@ -356,6 +315,7 @@ class OMLUtilities {
     
 	/*
 	 * Transform an XText base XExpression to an equivalent Scala expression in concrete syntax (String).
+	 * 
 	 */
 	static def String toScala(XExpression exp) {
 		val result = switch exp {
@@ -370,9 +330,12 @@ class OMLUtilities {
 				val rS = rF.toScala
 				
 				if (!exp.actualArguments.empty)
-					throw new java.lang.IllegalArgumentException(".toScala can only handle an XMemberFeatureCall for calling an operation with 0 arguments.")
+					throw new IllegalArgumentException(".toScala can only handle an XMemberFeatureCall for calling an operation with 0 arguments.")
 				
 				val tF = exp.feature
+				if (tF.eIsProxy)
+					throw new IllegalArgumentException("Cannot resolve an XMemberFeatureCall because the feature is a proxy; expression="+exp.toString()+" in: "+exp.eResource.URI)
+				
 				val tS = tF.simpleName
 			    val s = rS+"."+tS+"()"
 			    s
@@ -464,9 +427,13 @@ class OMLUtilities {
     }
 		
     static def Boolean isSchema(ENamedElement e) {
-    	null === e.getEAnnotation("http://imce.jpl.nasa.gov/oml/NotSchema")
+    	null === e.getEAnnotation("http://imce.jpl.nasa.gov/oml/NotSchema") && !e.isResolverAPI
     }
-    
+		
+    static def Boolean isResolverAPI(ENamedElement e) {
+    	null !== e.getEAnnotation("http://imce.jpl.nasa.gov/oml/ResolverAPI")
+    }
+     
     static def Boolean isValueTable(ENamedElement e) {
     	null !== e.getEAnnotation("http://imce.jpl.nasa.gov/oml/ValueTable")
     }
@@ -495,6 +462,7 @@ class OMLUtilities {
 		"AnnotationPropertyTable",
 		"AnnotationSubjectPropertyValue",
 		"AnnotationSubjectTable",
+		"Extent", 
 		"TerminologyGraph", 
 		"Bundle", 
 		"ConceptDesignationTerminologyAxiom",
@@ -530,8 +498,7 @@ class OMLUtilities {
 		"BundledTerminologyAxiom",
 		"AnonymousConceptTaxonomyAxiom",
 		"RootConceptTaxonomyAxiom",
-		"SpecificDisjointConceptAxiom",
-		"Annotation"
+		"SpecificDisjointConceptAxiom"
 		]
 		
 		override compare(EClass c1, EClass c2) {
@@ -556,9 +523,7 @@ class OMLUtilities {
 		val knownAttributes = #[
 		"uuid", 
 		"tboxUUID",
-		"bundleExtentUUID",
-		"graphExtentUUID",
-		"descriptionExtentUUID",
+		"extentUUID",
 		"terminologyBundleUUID",
 		"bundledTerminologyUUID",
 		"extendedTerminologyUUID",
@@ -635,7 +600,12 @@ class OMLUtilities {
 		"iri",
 		"value",
 		"scalarPropertyValue",
-		"literalValue"
+		"literalValue",
+		"annotationsUUID",
+		"boxStatementsUUID",
+		"boxAxiomsUUID",
+		"bundleStatementsUUID",
+		"bundleAxiomsUUID"
 		]
 		override compare(ETypedElement o1, ETypedElement o2) {
 			val name1 = o1.columnName

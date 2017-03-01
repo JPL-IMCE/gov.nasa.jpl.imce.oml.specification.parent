@@ -1,11 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="buildship-neon" sequenceNumber="60">
+<?pde version="3.8"?><target includeMode="feature" name="buildship-neon" sequenceNumber="63">
 <locations>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.buildship.feature.group" version="2.0.0.v20170111-1002-m"/>
+<repository location="http://download.eclipse.org/buildship/updates/e46/milestones/2.x"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.swtbot.eclipse.feature.group" version="2.2.1.201402241301"/>
+<unit id="org.eclipse.swtbot.ide.feature.group" version="2.2.1.201402241301"/>
+<repository location="http://builds.gradle.org:8000/eclipse/update-site/mirror/swtbot/release/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.gradle.toolingapi" version="3.3.0.v20170103170240"/>
+<unit id="com.gradleware.tooling.utils" version="0.17.0.v20170103170240"/>
+<unit id="com.gradleware.tooling.client" version="0.17.0.v20170103170240"/>
+<unit id="com.gradleware.tooling.model" version="0.17.0.v20170103170240"/>
+<repository location="jar:https://repo.gradle.org/gradle/tooling-libs-releases-local/com/gradleware/tooling/p2-repository/0.17.0/p2-repository-0.17.0.zip!/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.emf.cdo.explorer.feature.group" version="4.4.0.v20160607-1254"/>
+<unit id="org.eclipse.net4j.util.feature.group" version="4.5.0.v20160607-1254"/>
+<unit id="org.eclipse.emf.cdo.migrator.feature.group" version="4.2.300.v20160301-1326"/>
+<unit id="org.eclipse.net4j.util.ui.feature.group" version="4.5.0.v20160607-1254"/>
+<unit id="org.eclipse.emf.cdo.compare.feature.group" version="4.4.0.v20160301-1326"/>
+<unit id="org.eclipse.emf.cdo.doc.feature.group" version="4.2.300.v20160607-1511"/>
+<unit id="org.eclipse.emf.cdo.feature.group" version="4.5.0.v20160607-1254"/>
+<unit id="org.eclipse.net4j.util.doc.feature.group" version="4.2.300.v20160607-1511"/>
+<repository location="http://download.eclipse.org/modeling/emf/cdo/updates/releases/4.5/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="com.itemis.xtext.testing.feature.feature.group" version="0.2.0.201612011358"/>
+<repository location="https://dl.bintray.com/itemis/generic/xtext-testing/updates/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.xtend.sdk.feature.group" version="2.11.0.v20170201-0242"/>
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.11.0.v20170201-0242"/>
+<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+</location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="javax.ws.rs" version="2.0.1.v201504171603"/>
 <unit id="javax.jws" version="2.0.0.v201005080400"/>
-<unit id="org.apache.ant" version="1.9.6.v201510161327"/>
 <unit id="org.antlr.runtime" version="4.3.0.v201502022030"/>
+<unit id="org.apache.ant" version="1.9.6.v201510161327"/>
 <unit id="org.slf4j.ext" version="1.7.2.v20121108-1250"/>
 <unit id="org.w3c.dom.events" version="3.0.0.draft20060413_v201105210656"/>
 <unit id="org.apache.batik.util.gui.source" version="1.7.0.v200903091627"/>
@@ -68,6 +104,7 @@
 <unit id="javax.xml.rpc" version="1.1.0.v201209140446"/>
 <unit id="javax.mail.glassfish" version="1.4.1.v201108011116"/>
 <unit id="org.apache.batik.util.gui" version="1.7.0.v200903091627"/>
+<unit id="com.google.inject.assistedinject.source" version="3.0.0.v201402270930"/>
 <unit id="javax.servlet.jsp" version="2.2.0.v201112011158"/>
 <unit id="javax.persistence.source" version="1.0.0.v200905011740"/>
 <unit id="javax.mail.glassfish.source" version="1.4.1.v201108011116"/>
@@ -84,6 +121,7 @@
 <unit id="org.w3c.dom.smil.source" version="1.0.1.v200903091627"/>
 <unit id="com.sun.el" version="2.2.0.v201303151357"/>
 <unit id="com.jcraft.jsch" version="0.1.53.v201508180515"/>
+<unit id="com.google.inject.multibindings" version="3.0.0.v201605172100"/>
 <unit id="org.apache.felix.gogo.runtime" version="0.10.0.v201209301036"/>
 <unit id="org.apache.jasper.glassfish" version="2.2.2.v201501141630"/>
 <unit id="org.w3c.dom.events.source" version="3.0.0.draft20060413_v201105210656"/>
@@ -131,6 +169,7 @@
 <unit id="javax.jms" version="1.1.0.v201205091237"/>
 <unit id="org.sat4j.pb" version="2.3.5.v201404071733"/>
 <unit id="org.apache.felix.gogo.shell.source" version="0.10.0.v201212101605"/>
+<unit id="com.google.inject.assistedinject" version="3.0.0.v201402270930"/>
 <unit id="org.apache.felix.gogo.shell" version="0.10.0.v201212101605"/>
 <unit id="org.objectweb.asm.source" version="5.0.1.v201404251740"/>
 <unit id="javax.servlet.jsp.jstl" version="1.2.0.v201105211821"/>
@@ -138,37 +177,11 @@
 <unit id="javax.xml.bind" version="2.2.0.v201105210648"/>
 <unit id="org.apache.bcel.source" version="5.2.0.v201005080400"/>
 <unit id="org.objectweb.asm" version="5.0.1.v201404251740"/>
+<unit id="com.google.inject.multibindings.source" version="3.0.0.v201605172100"/>
 <unit id="org.apache.ant.source" version="1.9.6.v201510161327"/>
-<unit id="javax.validation.source" version="1.0.0.GA_v201205091237"/>
 <unit id="org.apache.commons.lang.source" version="2.6.0.v201404270220"/>
+<unit id="javax.validation.source" version="1.0.0.GA_v201205091237"/>
 <repository location="http://builds.gradle.org:8000/eclipse/update-site/mirror/orbit-neon/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.buildship.feature.group" version="2.0.0.v20170111-1002-m"/>
-<repository location="http://download.eclipse.org/buildship/updates/e46/milestones/2.x"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.swtbot.eclipse.feature.group" version="2.2.1.201402241301"/>
-<unit id="org.eclipse.swtbot.ide.feature.group" version="2.2.1.201402241301"/>
-<repository location="http://builds.gradle.org:8000/eclipse/update-site/mirror/swtbot/release/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.gradle.toolingapi" version="3.3.0.v20170103170240"/>
-<unit id="com.gradleware.tooling.utils" version="0.17.0.v20170103170240"/>
-<unit id="com.gradleware.tooling.client" version="0.17.0.v20170103170240"/>
-<unit id="com.gradleware.tooling.model" version="0.17.0.v20170103170240"/>
-<repository location="jar:https://repo.gradle.org/gradle/tooling-libs-releases-local/com/gradleware/tooling/p2-repository/0.17.0/p2-repository-0.17.0.zip!/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.cdo.explorer.feature.group" version="4.4.0.v20160607-1254"/>
-<unit id="org.eclipse.net4j.util.feature.group" version="4.5.0.v20160607-1254"/>
-<unit id="org.eclipse.emf.cdo.migrator.feature.group" version="4.2.300.v20160301-1326"/>
-<unit id="org.eclipse.net4j.util.ui.feature.group" version="4.5.0.v20160607-1254"/>
-<unit id="org.eclipse.emf.cdo.compare.feature.group" version="4.4.0.v20160301-1326"/>
-<unit id="org.eclipse.emf.cdo.doc.feature.group" version="4.2.300.v20160607-1511"/>
-<unit id="org.eclipse.emf.cdo.feature.group" version="4.5.0.v20160607-1254"/>
-<unit id="org.eclipse.net4j.util.doc.feature.group" version="4.2.300.v20160607-1511"/>
-<repository location="http://download.eclipse.org/modeling/emf/cdo/updates/releases/4.5/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.ecore.xcore.sdk.feature.group" version="1.4.0.v20160526-0606"/>
@@ -177,25 +190,21 @@
 <unit id="org.eclipse.m2e.logback.feature.feature.group" version="1.7.0.20160603-1933"/>
 <unit id="org.eclipse.oomph.projectconfig.feature.group" version="1.6.0.v20161019-0656"/>
 <unit id="org.eclipse.sirius.runtime.ide.xtext.feature.group" version="4.1.2.201612021444"/>
+<unit id="org.eclipse.oomph.targlets.feature.group" version="1.6.0.v20161104-0635"/>
+<unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="2.9.0.v201605261103"/>
 <unit id="org.eclipse.oomph.preferences.feature.group" version="1.6.0.v20161019-0656"/>
 <unit id="org.eclipse.sirius.specifier.feature.group" version="4.1.2.201612021444"/>
 <unit id="org.eclipse.m2e.feature.feature.group" version="1.7.0.20160603-1933"/>
 <unit id="org.eclipse.oomph.version.feature.group" version="1.6.0.v20161019-0656"/>
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.12.0.v20160526-0356"/>
-<unit id="org.eclipse.sirius.properties.feature.feature.group" version="4.1.2.201612021444"/>
-<unit id="org.eclipse.xtext.sdk.feature.group" version="2.10.0.v201605250459"/>
-<unit id="org.eclipse.oomph.setup.sdk.feature.group" version="1.6.0.v20161128-0928"/>
-<unit id="org.eclipse.xtend.sdk.feature.group" version="2.10.0.v201605250459"/>
-<unit id="org.eclipse.oomph.targlets.feature.group" version="1.6.0.v20161104-0635"/>
-<unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="2.9.0.v201605261103"/>
 <unit id="org.eclipse.m2e.sdk.feature.feature.group" version="1.7.0.20160603-1933"/>
 <unit id="org.eclipse.emf.eef.sdk-feature.feature.group" version="1.5.1.201601141612"/>
+<unit id="org.eclipse.sirius.properties.feature.feature.group" version="4.1.2.201612021444"/>
+<unit id="org.eclipse.pde.feature.group" version="3.12.2.v20161124-1400"/>
 <unit id="org.eclipse.xsd.sdk.feature.group" version="2.12.0.v20160526-0356"/>
+<unit id="org.eclipse.e4.core.tools.feature.source.feature.group" version="4.5.100.v20160503-0947"/>
+<unit id="org.eclipse.oomph.setup.sdk.feature.group" version="1.6.0.v20161128-0928"/>
 <repository location="http://download.eclipse.org/releases/neon/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="com.itemis.xtext.testing.feature.feature.group" version="0.2.0.201612011358"/>
-<repository location="https://dl.bintray.com/itemis/generic/xtext-testing/updates/"/>
 </location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>

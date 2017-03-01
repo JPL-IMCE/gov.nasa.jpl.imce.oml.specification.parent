@@ -1,7 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: jpl.imce.oml.specification.ui.tests
-Bundle-Vendor: 
 Bundle-Version: 0.3.0
 Bundle-SymbolicName: jpl.imce.oml.specification.ui.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
@@ -10,9 +9,11 @@ Require-Bundle: jpl.imce.oml.specification.ui,
  org.eclipse.xtext.junit4,
  org.eclipse.xtext.xbase.junit,
  org.eclipse.core.runtime,
- org.eclipse.ui.workbench;resolution:=optional
+ org.eclipse.ui.workbench;resolution:=optional,
+ org.eclipse.xtext.testing,
+ org.eclipse.xtext.xbase.testing
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: jpl.imce.oml.specification.ui.tests
+Export-Package: jpl.imce.oml.specification.ui.tests;x-internal=true
 Import-Package: org.hamcrest.core,
  org.junit;version="4.5.0",
  org.junit.runners.model;version="4.5.0",

@@ -2,57 +2,21 @@
 
    <requires>
       <import feature="org.eclipse.e4.rcp" version="1.5.2.v20161122-1740"/>
-      <import feature="org.eclipse.egit" version="4.4.1.201607150455-r"/>
       <import feature="org.eclipse.emf" version="2.12.0.v20160526-0356"/>
       <import feature="org.eclipse.emf.cdo" version="4.5.0.v20160607-1254"/>
-      <import feature="org.eclipse.emf.cdo.epp" version="4.5.0.v20160607-1511"/>
-      <import feature="org.eclipse.emf.common" version="2.12.0.v20160420-0247"/>
-      <import feature="org.eclipse.emf.common.ui" version="2.11.0.v20160526-0356"/>
-      <import feature="org.eclipse.emf.compare" version="3.2.1.201608311750"/>
-      <import feature="org.eclipse.emf.compare.egit" version="1.1.1.201608311750"/>
-      <import feature="org.eclipse.emf.compare.ide.ui" version="3.2.1.201608311750"/>
-      <import feature="org.eclipse.emf.ecore" version="2.12.0.v20160420-0247"/>
-      <import feature="org.eclipse.emf.ecore.edit" version="2.9.0.v20160526-0356"/>
-      <import feature="org.eclipse.emf.ecp.cdo.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.e4.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.emfforms.runtime.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.emfstore.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.categorization.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.compoundcontrol.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.custom.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.edapt.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.group.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.horizontal.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.label.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.model.controls.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.model.editor.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.rule.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.stack.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.table.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.template.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.treemasterdetail.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.unset.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.validation.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.validation.initial.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.vertical.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.view.viewproxy.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.viewmodel.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.ecp.workspace.feature" version="1.11.0.20161205-1431"/>
-      <import feature="org.eclipse.emf.edit" version="2.12.0.v20160526-0356"/>
-      <import feature="org.eclipse.emf.edit.ui" version="2.12.0.v20160526-0356"/>
-      <import feature="org.eclipse.emf.workspace" version="1.10.0.201606071900"/>
-      <import feature="org.eclipse.equinox.p2.core.feature" version="1.3.201.v20161115-1950"/>
-      <import feature="org.eclipse.equinox.p2.discovery.feature" version="1.0.401.v20160901-1335"/>
-      <import feature="org.eclipse.equinox.p2.extras.feature" version="1.2.201.v20161116-1353"/>
-      <import feature="org.eclipse.equinox.p2.rcp.feature" version="1.2.201.v20161124-1529"/>
-      <import feature="org.eclipse.equinox.p2.user.ui" version="2.2.201.v20161124-1529"/>
-      <import feature="org.eclipse.platform" version="4.6.2.v20161124-1529"/>
-      <import feature="org.eclipse.rcp" version="4.6.2.v20161124-1400"/>
-      <import feature="org.eclipse.xtext.runtime" version="2.10.0.v201605250459"/>
-      <import feature="org.eclipse.xtext.ui" version="2.10.0.v201605250459"/>
-      <import feature="org.eclipse.xtext.xbase" version="2.10.0.v201605250459"/>
-      <import feature="org.eclipse.xtext.xbase.lib" version="2.10.0.v201605250459"/>
+      <import feature="org.eclipse.emf.ecore.xcore.sdk" version="1.4.0.v20160526-0606"/>
+      <import feature="org.eclipse.sirius.runtime.ide.xtext" version="4.1.2.201612021444"/>
+      <import feature="org.eclipse.sirius.properties.feature" version="4.1.2.201612021444"/>
+      <import feature="org.eclipse.emf.eef.sdk-feature" version="1.5.1.201601141612"/>
+      <import feature="org.eclipse.xtend.sdk" version="2.11.0.v20170201-0242"/>
+      <import feature="org.eclipse.emf.sdk" version="2.12.0.v20160526-0356"/>
+      <import feature="org.eclipse.sirius.specifier" version="4.1.2.201612021444"/>
+      <import feature="org.eclipse.emf.cdo.explorer" version="4.4.0.v20160607-1254"/>
+      <import feature="org.eclipse.net4j.util" version="4.5.0.v20160607-1254"/>
+      <import feature="org.eclipse.net4j.util.ui" version="4.5.0.v20160607-1254"/>
+      <import feature="org.eclipse.emf.cdo.compare" version="4.4.0.v20160301-1326"/>
+      <import feature="org.eclipse.swtbot.eclipse" version="2.2.1.201402241301"/>
+      <import feature="org.eclipse.swtbot.ide" version="2.2.1.201402241301"/>
    </requires>
 
    <plugin download-size="0" id="jpl.imce.oml.specification" install-size="0" unpack="false" version="0.0.0"/>

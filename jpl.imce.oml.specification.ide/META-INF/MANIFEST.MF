@@ -1,13 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: jpl.imce.oml.specification.ide
-Bundle-Vendor: 
 Bundle-Version: 0.3.0
 Bundle-SymbolicName: jpl.imce.oml.specification.ide; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: jpl.imce.oml.specification,
  org.eclipse.xtext.ide,
- org.eclipse.xtext.xbase.ide
+ org.eclipse.xtext.xbase.ide,
+ org.antlr.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: jpl.imce.oml.specification.ide.contentassist.antlr.internal,
  jpl.imce.oml.specification.ide.contentassist.antlr

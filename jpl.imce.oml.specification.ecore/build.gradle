@@ -1,36 +1,54 @@
-apply plugin: eclipsebuild.BundlePlugin
+//apply plugin: eclipsebuild.BundlePlugin
 
 dependencies {
     compile withEclipseBundle('org.eclipse.core.runtime')
     compile withEclipseBundle('org.eclipse.core.resources')
 	compile withEclipseBundle('org.eclipse.xtext.xbase')
 	compile withEclipseBundle('org.eclipse.emf.ecore.xcore.lib')
-	compile files('lib/java-uuid-generator-3.1.3.jar')
-	
+	compile withEclipseBundle('org.eclipse.emf.ecore.xcore')
+	compile withEclipseBundle('org.eclipse.emf.ecore.xcore.lib')
+	compile withEclipseBundle('org.eclipse.emf.codegen.ecore')
+	compile withEclipseBundle('org.eclipse.emf.codegen.ecore.xtext')
+	compile withEclipseBundle('org.eclipse.xtext.ecore')
 	compile withEclipseBundle('org.eclipse.net4j.util')
 	compile withEclipseBundle('org.eclipse.emf.cdo.common')
 	compile withEclipseBundle('org.eclipse.emf.cdo')
 	
+	compile files('lib/java-uuid-generator-3.1.3.jar') 
+
 	xtextLanguages withEclipseBundle('org.eclipse.emf.ecore.xcore')
-	xtextLanguages withEclipseBundle('org.eclipse.emf.ecore.xcore.lib')
-	xtextLanguages withEclipseBundle('org.eclipse.emf.codegen.ecore')
-	xtextLanguages withEclipseBundle('org.eclipse.emf.codegen.ecore.xtext')
-	xtextLanguages withEclipseBundle('org.eclipse.xtext.ecore')
-	xtextLanguages files('lib/java-uuid-generator-3.1.3.jar')
-	xtextLanguages withEclipseBundle('org.eclipse.net4j.util')
-	xtextLanguages withEclipseBundle('org.eclipse.emf.cdo.common')
-	xtextLanguages withEclipseBundle('org.eclipse.emf.cdo')
+}
+
+configurations {
+	xtextLanguages {
+		extendsFrom compile
+	}
+	compile.transitive = true
+	testCompile.transitive = true
+}
+
+eclipse {
+    project {
+        natures 'org.eclipse.pde.PluginNature'
+        buildCommand 'org.eclipse.pde.ManifestBuilder'
+        buildCommand 'org.eclipse.pde.SchemaBuilder'
+    }
 }
 
 sourceSets {
-	main {
-		resources {
-			exclude '**/*.xcore'
-		}
-	}
+    main {
+        java.srcDirs = ['src', 'build/xcore/main/']
+        resources.srcDirs = ['model']
+        xtendOutputDir = 'build/xcore/main/'
+        resources {
+            exclude '**/*.xcore'
+        }
+    }
+    test {
+        java.srcDirs = []
+        resources.srcDirs = []
+    }
 }
-
-generateXtext.onlyIf { false }
 
 xtext {
 	version = "${xtextVersion}"

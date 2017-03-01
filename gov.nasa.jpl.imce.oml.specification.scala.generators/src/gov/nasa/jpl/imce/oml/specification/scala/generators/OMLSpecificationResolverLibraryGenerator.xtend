@@ -20,12 +20,9 @@ package gov.nasa.jpl.imce.oml.specification.scala.generators
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Paths
-import java.util.Map
-import jpl.imce.oml.specification.ecore.OMLPackage
-import org.eclipse.emf.common.util.URI
+import java.util.List
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.util.EcoreUtil
 
 class OMLSpecificationResolverLibraryGenerator extends OMLUtilities {
 	
@@ -39,37 +36,25 @@ class OMLSpecificationResolverLibraryGenerator extends OMLUtilities {
 	}
 	
 	def generate(String targetDir) {
-		val omlXcore = "/model/OMLSpecification.xcore"
-		val set = createXcoreResourceSet(
-			[Map<URI,URI> uriMap | 
-			uriMap.put(
-				URI.createURI("platform:/resource/jpl.imce.oml.specification.ecore"+omlXcore),
-				URI.createURI(OMLPackage.getResource(omlXcore).toURI.toString))
-				])
 		
-		val sourceURI = URI.createPlatformResourceURI("/jpl.imce.oml.specification.ecore"+omlXcore, false)
-      	val sourceResource = set.getResource(sourceURI, true)
-      	EcoreUtil.resolveAll(set)
-      	val ePackage = sourceResource.getContents().filter(EPackage).get(0)
-      	
 		val bundlePath = Paths.get(targetDir)
 		val targetFolder = "src/main/scala/gov/nasa/jpl/imce/oml/specification/resolver/impl"
 		val targetPath = bundlePath.resolve(targetFolder)
 		targetPath.toFile.mkdirs	
 		
-      	generate(ePackage, targetPath.toAbsolutePath.toString)	      	
+      	generate(#[c, t, g, b, d], targetPath.toAbsolutePath.toString)	      	
 	}
 	
-	def generate(EPackage ePackage, String targetFolder) {
+	def generate(List<EPackage> ePackages, String targetFolder) {
 		val factoryFile = new FileOutputStream(new File(targetFolder + File::separator + "OMLResolvedFactoryImpl.scala"))
-		factoryFile.write(generateFactoryFile(ePackage, "gov.nasa.jpl.imce.oml.specification.resolver.impl").bytes)
-		for(eClass : ePackage.FunctionalAPIClasses)  {
+		factoryFile.write(generateFactoryFile(ePackages, "gov.nasa.jpl.imce.oml.specification.resolver.impl").bytes)
+		for(eClass : ePackages.map[FunctionalAPIClasses].flatten)  {
 			val classFile = new FileOutputStream(new File(targetFolder + File::separator + eClass.name + ".scala"))
 			classFile.write(generateClassFile(eClass).bytes)
 		}
 	}
 	
-	def String generateFactoryFile(EPackage ePackage, String packageQName) '''
+	def String generateFactoryFile(List<EPackage> ePackages, String packageQName) '''
 		«copyright»
 		package «packageQName»
 		
@@ -77,7 +62,7 @@ class OMLSpecificationResolverLibraryGenerator extends OMLUtilities {
 		
 		case class OMLResolvedFactoryImpl() extends resolver.api.OMLResolvedFactory {
 			
-		  «FOR eClass: ePackage.FunctionalAPIClasses.filter[!isAbstract].sortBy[name]»
+		  «FOR eClass: ePackages.map[FunctionalAPIClasses].flatten.filter[!isAbstract].sortBy[name]»
 		  // «eClass.name»
 		  
 		  def create«eClass.name»

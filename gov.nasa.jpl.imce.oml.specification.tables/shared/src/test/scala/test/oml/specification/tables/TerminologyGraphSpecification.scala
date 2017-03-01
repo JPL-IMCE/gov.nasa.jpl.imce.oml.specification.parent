@@ -31,9 +31,9 @@ object TerminologyGraphSpecification extends Properties("TerminologyGraph") {
     SchemaGenerators.kind,
     SchemaGenerators.iri)(
     (uuid: java.util.UUID,
-     kind: TerminologyGraphKind,
+     kind: TerminologyKind,
      iri: String) => {
-    val w = new TerminologyGraph(uuid.toString, kind, iri)
+    val w = TerminologyGraph(uuid.toString, kind, iri)
     val s = TerminologyGraphHelper.toJSON(w)
     val t = s"""{"uuid":"${w.uuid}","kind":"${w.kind}","iri":"${w.iri}"}"""
     val r = TerminologyGraphHelper.fromJSON(s)

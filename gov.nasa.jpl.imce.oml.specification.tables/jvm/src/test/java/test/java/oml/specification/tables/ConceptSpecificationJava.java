@@ -30,21 +30,19 @@ public class ConceptSpecificationJava {
     public void creationTest() {
         String graphUUID = "01234-abcde-4569-fehi";
         String uuid = "12345-BCDEF-6789A-012345";
-        boolean isAbstract=false;
         String name="ElectricCar";
 
-        Concept w1 = new Concept(graphUUID, uuid, isAbstract, name);
+        Concept w1 = new Concept(graphUUID, uuid, name);
         Assert.assertEquals(w1.name(), name);
         String s1 = ConceptHelper.toJSON(w1);
         String t1 = String.format(
-                "{\"graphUUID\":\"%s\",\"uuid\":\"%s\",\"isAbstract\":%b,\"name\":\"%s\"}",
-                graphUUID, uuid, isAbstract,name);
+                "{\"graphUUID\":\"%s\",\"uuid\":\"%s\",\"name\":\"%s\"}",
+                graphUUID, uuid,name);
         Assert.assertEquals(t1, s1);
 
         Concept r1 = ConceptHelper.fromJSON(s1);
         Assert.assertEquals(w1.tboxUUID(), r1.tboxUUID());
         Assert.assertEquals(w1.uuid(), r1.uuid());
-        Assert.assertEquals(w1.isAbstract(), r1.isAbstract());
         Assert.assertEquals(w1.name(), r1.name());
         Assert.assertTrue(w1.equals(r1));
 

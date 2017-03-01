@@ -23,9 +23,29 @@
 <plugin>
 
    <extension point="org.eclipse.emf.edit.itemProviderAdapterFactories">
+      <!-- @generated OMLC -->
+      <factory
+            uri="http://imce.jpl.nasa.gov/oml/common"
+            class="gov.nasa.jpl.imce.oml.common.provider.OMLCItemProviderAdapterFactory"
+            supportedTypes=
+              "org.eclipse.emf.edit.provider.IEditingDomainItemProvider
+               org.eclipse.emf.edit.provider.IStructuredItemContentProvider
+               org.eclipse.emf.edit.provider.ITreeItemContentProvider
+               org.eclipse.emf.edit.provider.IItemLabelProvider
+               org.eclipse.emf.edit.provider.IItemPropertySource"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.edit.childCreationExtenders">
+      <!-- @generated OMLC -->
+      <extender
+            uri="http://imce.jpl.nasa.gov/oml/extent"
+            class="gov.nasa.jpl.imce.oml.common.provider.OMLCItemProviderAdapterFactory$OMLEChildCreationExtender"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.edit.itemProviderAdapterFactories">
       <!-- @generated OML -->
       <factory
-            uri="jpl.imce.oml.specification.ecore"
+            uri="http://imce.jpl.nasa.gov/oml"
             class="jpl.imce.oml.specification.ecore.provider.OMLItemProviderAdapterFactory"
             supportedTypes=
               "org.eclipse.emf.edit.provider.IEditingDomainItemProvider

@@ -23,6 +23,33 @@
 <plugin>
 
    <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated OMLC -->
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="gov.nasa.jpl.imce.oml.common.presentation.OMLCModelWizardID"
+            name="%_UI_OMLCModelWizard_label"
+            class="gov.nasa.jpl.imce.oml.common.presentation.OMLCModelWizard"
+            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            icon="icons/full/obj16/OMLCModelFile.gif">
+         <description>%_UI_OMLCModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated OMLC -->
+      <editor
+            id="gov.nasa.jpl.imce.oml.common.presentation.OMLCEditorID"
+            name="%_UI_OMLCEditor_label"
+            icon="icons/full/obj16/OMLCModelFile.gif"
+            extensions="omlc"
+            class="gov.nasa.jpl.imce.oml.common.presentation.OMLCEditor"
+            contributorClass="gov.nasa.jpl.imce.oml.common.presentation.OMLCActionBarContributor">
+      </editor>
+   </extension>
+   <extension point="org.eclipse.ui.newWizards">
       <!-- @generated OML -->
       <category
             id="org.eclipse.emf.ecore.Wizard.category.ID"
@@ -49,5 +76,4 @@
             contributorClass="jpl.imce.oml.specification.ecore.presentation.OMLActionBarContributor">
       </editor>
    </extension>
-
 </plugin>

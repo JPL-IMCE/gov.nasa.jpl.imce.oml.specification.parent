@@ -1,5 +1,20 @@
 # Composite project for JPL's Integrated Model-Centric Engineering (IMCE) Ontological Modeling Language (OML) Specification
 
+This is a multi-project of mostly Xcore/Xtext/Xtend sources used to generate several components (abstract syntax metamodel; concrete syntax parser, doc, ...).
+There are several Xtend-based code generators that produce Scala source code.
+Unfortunately, it has been more difficult than originally anticipated to achieve the following objectives:
+
+- Reproducible & consistent builds everywhere from a unix-like terminal and from the IDE (Eclipse or Intellij IDEA).
+- No duplication of configuration information (e.g. dependencies specified only in one place).
+- All Generated artifacts should be location-neutral & platform-neutral 
+  and should re-generate without any difference if the inputs haven't changed.
+- A machine-readable report of the provenance of each generated artifact 
+  to a particular generation tool, inputs and configuration settings.
+- Unified dependency management for both Eclipse P2-based repositories 
+  and Maven artifact repositories for both jar artifacts and zip aggregates of jar artifacts.
+
+Currently, this project reflects an attempt at using Gradle to achieve the above objectives; however, the result is far from achieving all the objectives.
+
 Travis CI: [![Build Status](https://travis-ci.org/JPL-IMCE/jpl.imce.oml.specification.parent.svg?branch=master)](https://travis-ci.org/JPL-IMCE/jpl.imce.oml.specification.parent)
 
 Bintray: [ ![Download](https://api.bintray.com/packages/jpl-imce/gov.nasa.jpl.imce.p2/jpl.imce.oml.specification.p2/images/download.svg) ](https://bintray.com/jpl-imce/gov.nasa.jpl.imce.p2/jpl.imce.oml.specification.p2/_latestVersion)
@@ -19,7 +34,12 @@ See [jpl.imce.oml.specification.repository/README.md](jpl.imce.oml.specification
 
 This project is developed using two IDEs: Eclipse & Intellij IDEA Ultimate.
 It would be nice if a single IDE could handle all the requirements.
- 
+
+The projects are primarily intended to be built using scripts for continuous
+integration (i.e., gradle or sbt). This means that the project metadata
+(e.g. dependencies, output directories, ...) is configured to work with
+these build scripts. 
+
 ### Eclipse Neon.2 
 
 Specifically, the Eclipse Neon.2 Modeling package which includes EMF, CDO, EGIT augmented with the following:
@@ -33,6 +53,90 @@ In principle, it should be possible to use Eclipse Oomph to configure
 a package with the above; in practice, it is unfortunately not obvious
 how to do this despite several attempts. 
 
+Recommendations:
+
+- Turn off `Project | Build Automatically`. 
+
+  Use a gradle and/or sbt commands in a terminal to perform build-related operations
+  on the project or sub-projects.
+
+- Execute [scripts/travis-build.sh] before importing this project in the Eclipse IDE
+
+  This will generate code from several files (e.g., *.xcore, *.xtend)
+  and generate the necessary Eclipse metadata files (e.g., .classpath, .project, ..).
+
+- Set the Eclipse Plug-In Development active target to [tooling-e46.target]
+
+  This is necessary to ensure that the Eclipse builders resolve dependencies 
+  in the same way that the gradle scripts do. The explicit target definition
+  facilitates managing versioned dependencies because the versions are specified
+  only in one place -- i.e., the target definition in [tooling-e46.target].
+  Eclipse & gradle dependencies in `plugin.xml`, `META-INF/MANIFEST.MF` or gradle build scripts
+  refer to a dependency by name alone without duplicating the particular version.
+  
+  There are exceptions:
+  
+  - The Xtext dependency is specified both in [tooling-e46.target] and in [xtextVersion.txt].
+  - Some dependencies that are not in a P2-based repository are copied (e.g., [java-uuid-generator-3.1.3.jar])
+  - SBT projects use a different versioned dependency management technique based
+  on grouping multiple versioned dependencies into a single mavenized zip versioned 
+  dependency aggregate. This helps avoid duplicating versioned dependencies
+  in several places.
+  
+Practical difficulties with Eclipse IDE:
+
+- After a successful gradle build and refreshing , Eclipse IDE sometimes reports errors in *.xcore files like this:
+
+  | Description	| Resource	| Path	| Location	| Type |
+  |-------------|------------|-------|-----------|------|
+  |The type Annotation is already defined in Annotation.java. | OMLCommon.xcore | /jpl.imce.oml.specification.ecore/model | line: 263 /jpl.imce.oml.specification.ecore/model/OMLCommon.xcore	| Xcore Problem |
+  
+  It seems that Eclipse somehow ignores the settings where the Xcore-generated
+  source code should be (i.e. 'build/xcore/main' per the generated metadata in '.settings/org.eclipse.emf.ecore.xcore.Xcore.prefs') thereby considering definitions in that location
+  to be duplicates with the definitions it implicitly assumes will be in the default location
+  (i.e., 'src-gen'). The non-default 'build/xcore/main' location was chosen to facilitate
+  cleaning up all generated files in gradle (i.e., delete the 'build' folder).
+
+- The Eclipse Buildship 2.0 supports executing gradle tasks as long as everything works fine.
+ 
+  It is surprisingly difficult to understand what's going on when an error happens.
+  Developing/debugging gradle build scripts in Java or Groovy is surprisingly difficult in Eclipse.
+  
+  Reusing some of the Eclipse Buildship scripts functionality is surprisingly not supported.
+  See: Bugzilla – Bug 469287 (CLOSED WONTFIX)](https://bugs.eclipse.org/bugs/show_bug.cgi?id=469287)
+ 
+- Poor support in Eclipse IDE for developing/debugging SBT build scripts
+  
+- Poor support in the Eclipse-based Scala IDE tooling for SBT/Scala projects
+
+  These projects are generated using Eclipse code generators from *.xcore & *.xtend
+  but are built/developed with IntelliJ IDEA instead of Eclipse.
+  
+- Poor support in the Eclipse-based Scala IDE tooling for polyglot programming with Scala cross-compilation
+
+  The sub-project [gov.nasa.jpl.imce.oml.specification.tables] is mostly Scala source code
+  generated from *.xcore and *.xtend files; which means that this sub-project
+  is part of this multi-project where the code generation happens from gradle build scripts.
+  However, to work on this sub-project, it is highly recommended to use the Intellij IDEA
+  which offers much better support than the Eclise-based Scala IDE does for cross-compilation.
+  
+- Location-independent development
+
+  Eclipse metadata files tend to include absolute paths that depend on the development host.
+  It is difficult to avoid this problem with the Eclipse IDE because there are a multitude of "build"
+  mechanisms involved that involve a multitude of a settings in several places.
+  
+  This project follows a different approach: generate IDE-specific metadata from command-line build commands.
+  Both Gradle and SBT have special build commands to generate Eclipse metadata files. 
+  For Eclipse, it means that the project has to be built before importing it in the IDE.
+  Intellij typically can import the project as-is without building it beforehand.
+  
+- Difficult to automate Eclipse builds without the IDE
+
+  The Eclipse EMF-based builders depend on EMF registrations (e.g., Ecore, GenModel, Xcore, Xtend, ...)
+  and on having an Eclipse "workspace". Outside of the Eclipse IDE, it is difficult to replicate
+  the same build behavior in some kind of command line script.
+  
 ### Intellij IDEA Ultimate
 
 All the SBT build configuration was developed using IDEA.
@@ -69,45 +173,27 @@ Thanks to the Gradle-based Eclipse Buildship, it is possible to:
 - build the Eclipse-based projects plugins, features & p2 repos 
 - execute the unit tests
 
-However, there are some caveats.
-
-### Caveats about Gradle
-
-Although Gradle is conceptually very similar to SBT (i.e., execution of a graph of tasks based on their dependencies),
-the fact that Gradle is dynamically typed and SBT is statically typed means that:
-- Gradle scripting looses the benefits that SBT scripting enjoys with static, compile-time checking. 
-- It can be difficult to understand what a particular Gradle script really does because the runtime dependency injection
-  that ultimately determines the actual runtime behavior can be difficult to find.
-  
-Following the suggestion from [Bugzilla – Bug 469287 (CLOSED WONTFIX)](https://bugs.eclipse.org/bugs/show_bug.cgi?id=469287),
-this project includes a copy of the internal gradle plugins that Eclipse buildship uses for building/publishing.
-Several Eclipse test-related scripts were deleted because of errors.
-
-However, following [Eclipse buildship developer setup instructions](https://github.com/eclipse/buildship/blob/master/docs/development/Setup.md) 
-turns out to be a non-trivial affair:
-- Adding the Java & Groovy nature (and possibly Gradle nature) would be required to get JDT support for
-  editing the buildship Java+Groovy scripts in [buildSrc/src/main/groovy](buildSrc/src/main/groovy).
-  However, doing so brings a lot of compilation errors; including the fact that without the Gradle 3.3 libraries,
-  a lot of imports are unresolved.
-  
-- The Eclipse buildship support can add gradle nature; however, it doesn't add Gradle 3.3 to the project classpath.
-  This means that there is no JDT support for editing gradle scripts!
-
-- Debugging gradle scripts is tedious with Eclipse Buildship.
-
-Intellij IDEA (2017.1 EAP) provides very good support for gradle projects.
-
-- IDEA can run/debug gradle tasks easily like anything else JVM-based.
+Gradle build scripts can be difficult to develop & understand because gradle relies
+extensively on dependency injection and runtime configuration. 
 
 ### Caveats about Eclipse Xtext/Xtend/Xcore
 
-Currently, this project uses the Eclipse-based tooling.
-The generated code is currently in GIT; however, there is some code generation noise that
-causes frivolous changes:
-- the `@Override` annotation is sometimes generated; sometimes not.
-- the generated `ecore.ecore` from the Xcore metamodel varies, primarily due to variations in serialization order
-- the generated `.classpath` files have platform-specific paths -- it is unclear whether these files can be
-  ignored in GIT and re-generated properly.
+This project depends on Xtext 2.11 for grammar-based formatting
+(see: https://github.com/eclipse/xtext-extras/issues/30)
+
+There is a different bug in the EMF generator used by the XcoreGenerator
+that prevents using GenModel annotations that would generate Eclipse metadata files
+like `plugin.xml` (see: https://www.eclipse.org/forums/index.php?t=msg&th=1084555&goto=1754620&#msg_1754620)
+
+Some Xtend programs behavior surprisingly differently.
+E.g. See [OMLLoadTest.xtend](gov.nasa.jpl.imce.oml.specification.scala.generators/src/gov/nasa/jpl/imce/oml/specification/scala/generators/OMLLoadTest.xtend)
+
+In the Eclipse IDE, it is possible to have several *.xcore files that cross-reference each other.
+However, outside the Eclipse IDE, even after calling `EcoreUtil.resolveAll(ResourceSet)` 
+forward cross-references remain unresolved proxies.
+
+For OML, the forward cross-references had to be commented out so that the *.xcore files
+can be loaded properly for executing the code generators that depend on everything being fully resolved.
 
 ## Continuous Integration
 

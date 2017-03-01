@@ -20,12 +20,9 @@ package gov.nasa.jpl.imce.oml.specification.scala.generators
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Paths
-import java.util.Map
-import jpl.imce.oml.specification.ecore.OMLPackage
-import org.eclipse.emf.common.util.URI
+import java.util.List
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.util.EcoreUtil
 
 class OMLSpecificationDocGenerator extends OMLUtilities {
 
@@ -40,32 +37,20 @@ class OMLSpecificationDocGenerator extends OMLUtilities {
 	}
 
 	def generate(String targetDir) {
-		val omlXcore = "/model/OMLSpecification.xcore"
-		val set = createXcoreResourceSet(
-			[ Map<URI, URI> uriMap |
-			uriMap.put(URI.createURI("platform:/resource/jpl.imce.oml.specification.ecore" + omlXcore),
-				URI.createURI(OMLPackage.getResource(omlXcore).toURI.toString))
-		])
-
-		val sourceURI = URI.createPlatformResourceURI("/jpl.imce.oml.specification.ecore" + omlXcore, false)
-		val sourceResource = set.getResource(sourceURI, true)
-		EcoreUtil.resolveAll(set)
-		val ePackage = sourceResource.getContents().filter(EPackage).get(0)
-
 		val targetPath = Paths.get(targetDir)
 		targetPath.toFile.mkdirs
 
 		generateGlossaryFile(
-			ePackage,
+			#[c, t, g, b, d], 
 			targetPath.toAbsolutePath.toString
 		)
 	}
 
-	def generateGlossaryFile(EPackage ePackage, String targetFolder) {
+	def generateGlossaryFile(List<EPackage> ePackages, String targetFolder) {
 		val glossaryFile = new FileOutputStream(new File(targetFolder + File::separator + "GLOSSARY.md"))
 		
 		try {
-			val glossaryEntries = ePackage.EClassifiers.filter(EClass).filter[isGlossary].sortBy[name]
+			val glossaryEntries = ePackages.map[EClassifiers].flatten.filter(EClass).filter[isGlossary].sortBy[name]
 
 			val entriesByAbstraction = glossaryEntries.groupBy[isAbstract]
 			val schemaEntries = entriesByAbstraction.get(false).filter[isSchema]

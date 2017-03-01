@@ -9,6 +9,13 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: jpl.imce.oml.specification.ecore.presentation,
+ gov.nasa.jpl.imce.oml.common.presentation,
+ gov.nasa.jpl.imce.oml.bundles.presentation,
+ gov.nasa.jpl.imce.oml.terminologies.presentation,
+ gov.nasa.jpl.imce.oml.extents.presentation,
+ gov.nasa.jpl.imce.oml.graphs.presentation,
+ gov.nasa.jpl.imce.oml.descriptions.presentation,
+ gov.nasa.jpl.imce.fm.presentation,
  jpl.imce.oml.specification.eore.editor.presentation
 Require-Bundle: org.eclipse.emf.ecore.xmi;visibility:=reexport,
  org.eclipse.emf.edit.ui;visibility:=reexport,

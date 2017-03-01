@@ -19,15 +19,17 @@ grammar jpl.imce.oml.specification.OntologicalModelingLanguage
 	with org.eclipse.xtext.common.Terminals
 	hidden(WS, ML_COMMENT, SL_COMMENT)
 
-import "jpl.imce.oml.specification.ecore" 
+import "http://imce.jpl.nasa.gov/oml/common"
+import "http://imce.jpl.nasa.gov/oml/terminologies"
+import "http://imce.jpl.nasa.gov/oml/graphs"
+import "http://imce.jpl.nasa.gov/oml/bundles"
+import "http://imce.jpl.nasa.gov/oml/descriptions"
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
-TerminologyExtent returns TerminologyExtent:
-	{TerminologyExtent}
+Extent returns Extent:
+	{Extent}
 	( annotationProperties+=AnnotationProperty |
-	  terminologyGraphs+=TerminologyGraph |
-	  bundles+=Bundle |
-	  descriptions+=DescriptionBox 
+	  modules+=Module
 	)*
 	;
 
@@ -59,26 +61,29 @@ Annotation returns Annotation:
 	ANNOTATION_TOKEN property=[AnnotationProperty|ABBREV_IRI]
 	EQUAL value=STRING;
 
+Module returns Module:
+	TerminologyBox | DescriptionBox;
+	
 // 2 TerminologyBoxes
 
 TerminologyBox returns TerminologyBox:
 	Bundle | TerminologyGraph;
 
 TerminologyGraph returns TerminologyGraph:
-	kind=TerminologyGraphKind TERMINOLOGY_GRAPH_TOKEN iri=IRI LCURLY
+	kind=TerminologyKind TERMINOLOGY_GRAPH_TOKEN iri=IRI LCURLY
 	( annotations+=Annotation | 
-	  terminologyBoxAxioms+=TerminologyBoxAxiom | 
+	  boxAxioms+=TerminologyBoxAxiom | 
 	  boxStatements+=TerminologyBoxStatement
 	)*
 	RCURLY;
 
 Bundle returns Bundle:
-	kind=TerminologyGraphKind BUNDLE_TOKEN iri=IRI LCURLY
+	kind=TerminologyKind BUNDLE_TOKEN iri=IRI LCURLY
 	( annotations+=Annotation |
-	  terminologyBoxAxioms+=TerminologyBoxAxiom |
+	  boxAxioms+=TerminologyBoxAxiom |
 	  boxStatements+=TerminologyBoxStatement |
 	  bundleStatements+=TerminologyBundleStatement |
-	  terminologyBundleAxioms+=TerminologyBundleAxiom
+	  bundleAxioms+=TerminologyBundleAxiom
 	)*
 	RCURLY;
 	
@@ -88,7 +93,7 @@ TerminologyBoxAxiom returns TerminologyBoxAxiom:
 	TerminologyNestingAxiom ;
 	
 TerminologyBoxStatement returns TerminologyBoxStatement:
-	Axiom | 
+	TermAxiom | 
 	Term;
 	
 Term returns Term:
@@ -128,14 +133,11 @@ DataRelationship returns DataRelationship:
 	EntityScalarDataProperty | 
 	StructuredDataProperty | 
 	ScalarDataProperty;
-
-Axiom returns Axiom:
-	ScalarOneOfLiteralAxiom |
-	TermAxiom;
 	
 TermAxiom returns TermAxiom:
 	EntityRestrictionAxiom |
 	EntityScalarDataPropertyRestrictionAxiom |
+	ScalarOneOfLiteralAxiom |
 	SpecializationAxiom;
 	
 EntityRestrictionAxiom returns EntityRestrictionAxiom:
@@ -164,7 +166,7 @@ ConceptTreeDisjunction returns ConceptTreeDisjunction:
 	AnonymousConceptTaxonomyAxiom |
 	RootConceptTaxonomyAxiom;
 
-enum TerminologyGraphKind returns TerminologyGraphKind:
+enum TerminologyKind returns TerminologyKind:
 	OpenWorldDefinitions = 'open' | 
 	ClosedWorldDesignations = 'closed'
 	;
@@ -175,12 +177,12 @@ Aspect returns Aspect:
 	ASPECT_TOKEN name=ID;
 
 Concept returns Concept:
-	(isAbstract?=ABSTRACT_TOKEN)? CONCEPT_TOKEN name=ID;
+	CONCEPT_TOKEN name=ID;
 
 // 2 EntityRelationship Terms
 
 ReifiedRelationship returns ReifiedRelationship:
-	(isAbstract?=ABSTRACT_TOKEN)? REIFIED_RELATIONSHIP_TOKEN name=ID LCURLY
+	REIFIED_RELATIONSHIP_TOKEN name=ID LCURLY
 	(isFunctional?=FUNCTIONAL_TOKEN)?
 	(isInverseFunctional?=INVERSE_FUNCTIONAL_TOKEN)?
 	(isEssential?=ESSENTIAL_TOKEN)?

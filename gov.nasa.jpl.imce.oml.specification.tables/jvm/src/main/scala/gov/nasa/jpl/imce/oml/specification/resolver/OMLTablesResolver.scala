@@ -43,7 +43,7 @@ object OMLTablesResolver {
   = for {
     init <- Try.apply(OMLTablesResolver(
       resolver.TerminologyContext(
-        factory.createTerminologyExtent(
+        factory.createExtent(
           annotationProperties =
             t
               .annotationProperties
@@ -52,9 +52,7 @@ object OMLTablesResolver {
                 acc +
                   factory.createAnnotationProperty(ap.iri, ap.abbrevIRI)
             },
-          bundles = TreeSet.empty[resolver.api.Bundle],
-          terminologyGraphs = TreeSet.empty[resolver.api.TerminologyGraph],
-          descriptions = TreeSet.empty[resolver.api.DescriptionBox])),
+          modules = TreeSet.empty[resolver.api.Module])),
       t,
       factory))
     // Terminologies
@@ -104,17 +102,17 @@ object OMLTablesResolver {
     val c = step11.context
     val e1 =
       factory
-        .copyTerminologyExtent_terminologyGraphs(
+        .copyExtent_modules(
           c.extent,
-          c.graphs.foldLeft[SortedSet[resolver.api.TerminologyGraph]](TreeSet.empty[resolver.api.TerminologyGraph]) {
+          c.graphs.foldLeft[SortedSet[resolver.api.Module]](TreeSet.empty[resolver.api.Module]) {
             case (acc, (_, g)) =>
               acc + g
           })
     val e2 =
       factory
-      .copyTerminologyExtent_bundles(
+      .copyExtent_modules(
         c.extent,
-        c.bundles.foldLeft[SortedSet[resolver.api.Bundle]](TreeSet.empty[resolver.api.Bundle]) {
+        c.bundles.foldLeft[SortedSet[resolver.api.Module]](TreeSet.empty[resolver.api.Module]) {
           case (acc, (_, b)) =>
             acc + b
         })
@@ -132,7 +130,7 @@ object OMLTablesResolver {
         resolver.context.extent, t.kind, t.iri,
         annotations=TreeSet.empty[api.Annotation],
         boxStatements=TreeSet.empty[api.TerminologyBoxStatement],
-        terminologyBoxAxioms=TreeSet.empty[api.TerminologyBoxAxiom])
+        boxAxioms=TreeSet.empty[api.TerminologyBoxAxiom])
       if (tg.uuid.toString != t.uuid)
         throw new java.lang.IllegalArgumentException(s"OMLTablesResolver.TerminologyGraph UUID mismatch: read: $t; created: $tg")
       gi + tg
@@ -154,10 +152,10 @@ object OMLTablesResolver {
         b.kind, b.iri,
         annotations=TreeSet.empty[api.Annotation],
         boxStatements=TreeSet.empty[api.TerminologyBoxStatement],
+        boxAxioms=TreeSet.empty[api.TerminologyBoxAxiom],
         bundleStatements=TreeSet.empty[api.TerminologyBundleStatement],
-        terminologyBoxAxioms=TreeSet.empty[api.TerminologyBoxAxiom],
-        terminologyBundleAxioms=TreeSet.empty[api.TerminologyBundleAxiom])
-      if (tb.uuid.toString != tb.uuid)
+        bundleAxioms=TreeSet.empty[api.TerminologyBundleAxiom])
+      if (tb.uuid.toString != b.uuid)
         throw new java.lang.IllegalArgumentException(s"OMLTablesResolver.Bundle UUID mismatch: read: $b; created: $tb")
       gi + tb
     }
@@ -262,7 +260,6 @@ object OMLTablesResolver {
           case (acc, e) =>
             val c = factory.createConcept(
               tbox=n0,
-              isAbstract=e.isAbstract,
               name=e.name)
             if (c.uuid.toString != e.uuid)
               throw new java.lang.IllegalArgumentException(s"OMLTablesResolver.concepts UUID mismatch; read: $e; got $c")
@@ -485,6 +482,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver)
   : Try[OMLTablesResolver]
   = {
+    import OMLOps._
+
     val ns
     : Map[tables.UUID, api.TerminologyGraph]
     = resolver.context.graphs.map {
@@ -560,6 +559,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver)
   : Try[OMLTablesResolver]
   = {
+    import OMLOps._
+
     val ns
     : Map[tables.UUID, api.TerminologyGraph]
     = resolver.context.tboxes.flatMap {
@@ -623,7 +624,7 @@ object OMLTablesResolver {
     val bundled = nodes(entry._1._2)
 
     val x = factory.createBundledTerminologyAxiom(
-        terminologyBundle = bundling,
+        bundle = bundling,
         bundledTerminology = bundled)
 
     if (x.uuid.toString != entry._2.uuid)
@@ -642,7 +643,7 @@ object OMLTablesResolver {
     val byUUID =
       resolver.queue.bundledTerminologyAxioms.par
         .map { tAxiom =>
-          (UUID.fromString(tAxiom.terminologyBundleUUID), UUID.fromString(tAxiom.bundledTerminologyUUID)) -> tAxiom
+          (UUID.fromString(tAxiom.uuid), UUID.fromString(tAxiom.bundledTerminologyUUID)) -> tAxiom
         }
 
     val (resolvable, unresolvable) =
@@ -773,6 +774,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.ReifiedRelationship]])
   : Try[(OMLTablesResolver, Seq[tables.ReifiedRelationship])]
   = {
+    import OMLOps._
+
     queue
       .foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.ReifiedRelationship]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
@@ -800,7 +803,6 @@ object OMLTablesResolver {
                 tbox,
                 referencableEntities(rr.sourceUUID),
                 referencableEntities(rr.targetUUID),
-                rr.isAbstract,
                 rr.isAsymmetric,
                 rr.isEssential,
                 rr.isFunctional,
@@ -864,6 +866,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.UnreifiedRelationship]] )
   : Try[(OMLTablesResolver, Seq[tables.UnreifiedRelationship])]
   = {
+    import OMLOps._
+
     queue
       .foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.UnreifiedRelationship]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
@@ -952,6 +956,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.EntityScalarDataProperty]] )
   : Try[(OMLTablesResolver, Seq[tables.EntityScalarDataProperty])]
   = {
+    import OMLOps._
+
     queue
       .foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.EntityScalarDataProperty]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
@@ -1038,6 +1044,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.EntityStructuredDataProperty]] )
   : Try[(OMLTablesResolver, Seq[tables.EntityStructuredDataProperty])]
   = {
+    import OMLOps._
+
     queue
       .foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.EntityStructuredDataProperty]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
@@ -1124,6 +1132,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.ScalarDataProperty]] )
   : Try[(OMLTablesResolver, Seq[tables.ScalarDataProperty])]
   = {
+    import OMLOps._
+
     queue
       .foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.ScalarDataProperty]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
@@ -1209,6 +1219,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.StructuredDataProperty]] )
   : Try[(OMLTablesResolver, Seq[tables.StructuredDataProperty])]
   = {
+    import OMLOps._
+
     queue
       .foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.StructuredDataProperty]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
@@ -1372,6 +1384,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.EntityExistentialRestrictionAxiom]] )
   : Try[(OMLTablesResolver, Seq[tables.EntityExistentialRestrictionAxiom])]
   = {
+    import OMLOps._
+
     queue.foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.EntityExistentialRestrictionAxiom]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
     ) {
@@ -1457,6 +1471,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.EntityUniversalRestrictionAxiom]] )
   : Try[(OMLTablesResolver, Seq[tables.EntityUniversalRestrictionAxiom])]
   = {
+    import OMLOps._
+
     queue.foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.EntityUniversalRestrictionAxiom]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
     ) {
@@ -1541,6 +1557,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.EntityScalarDataPropertyExistentialRestrictionAxiom]] )
   : Try[(OMLTablesResolver, Seq[tables.EntityScalarDataPropertyExistentialRestrictionAxiom])]
   = {
+    import OMLOps._
+
     queue.foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.EntityScalarDataPropertyExistentialRestrictionAxiom]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
     ) {
@@ -1630,6 +1648,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.EntityScalarDataPropertyParticularRestrictionAxiom]] )
   : Try[(OMLTablesResolver, Seq[tables.EntityScalarDataPropertyParticularRestrictionAxiom])]
   = {
+    import OMLOps._
+
     queue.foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.EntityScalarDataPropertyParticularRestrictionAxiom]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
     ) {
@@ -1714,6 +1734,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.EntityScalarDataPropertyUniversalRestrictionAxiom]] )
   : Try[(OMLTablesResolver, Seq[tables.EntityScalarDataPropertyUniversalRestrictionAxiom])]
   = {
+    import OMLOps._
+
     queue.foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.EntityScalarDataPropertyUniversalRestrictionAxiom]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
     ) {
@@ -1803,6 +1825,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.AspectSpecializationAxiom]] )
   : Try[(OMLTablesResolver, Seq[tables.AspectSpecializationAxiom])]
   = {
+    import OMLOps._
+
     queue.foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.AspectSpecializationAxiom]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
     ) {
@@ -1885,6 +1909,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.ConceptSpecializationAxiom]] )
   : Try[(OMLTablesResolver, Seq[tables.ConceptSpecializationAxiom])]
   = {
+    import OMLOps._
+
     queue.foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.ConceptSpecializationAxiom]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
     ) {
@@ -1962,6 +1988,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.ReifiedRelationshipSpecializationAxiom]] )
   : Try[(OMLTablesResolver, Seq[tables.ReifiedRelationshipSpecializationAxiom])]
   = {
+    import OMLOps._
+
     queue.foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.ReifiedRelationshipSpecializationAxiom]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
     ) {
@@ -2039,6 +2067,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.RootConceptTaxonomyAxiom]] )
   : Try[(OMLTablesResolver, Seq[tables.RootConceptTaxonomyAxiom])]
   = {
+    import OMLOps._
+
     queue.foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.RootConceptTaxonomyAxiom]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
     ) {
@@ -2202,6 +2232,8 @@ object OMLTablesResolver {
   (resolver: OMLTablesResolver, queue: Map[UUID, Seq[tables.SpecificDisjointConceptAxiom]])
   : Try[(OMLTablesResolver, Seq[tables.SpecificDisjointConceptAxiom])]
   = {
+    import OMLOps._
+
     queue
       .foldLeft[Try[(OMLTablesResolver, Map[UUID, Seq[tables.SpecificDisjointConceptAxiom]], Boolean)]](
       Success(Tuple3(resolver, Map.empty, false))
@@ -2343,7 +2375,7 @@ object OMLTablesResolver {
 
   def annotationMapS
   (factory: api.OMLResolvedFactory,
-   subjects_by_terminology: Map[tables.UUID, (api.TerminologyBox, Map[tables.UUID, api.TerminologyThing])],
+   subjects_by_terminology: Map[tables.UUID, (api.TerminologyBox, Map[tables.UUID, api.Element])],
    aps: SortedSet[api.AnnotationProperty])
   (q_u: (ResolvedAnnotationMap, AnnotationMapTables),
    ap_as: (tables.AnnotationProperty, Seq[tables.AnnotationEntry]))
@@ -2462,57 +2494,4 @@ object OMLTablesResolver {
     r2
   }
 
-  /*
-
-  final def resolveAnnotationPairs
-  (resolver: OMFSchemaResolver,
-   queue: Map[tables.AnnotationProperty, Seq[tables.Annotation]],
-   remaining: Map[tables.AnnotationProperty, Seq[tables.Annotation]])
-  : Try[(OMFSchemaResolver, Map[tables.AnnotationProperty, Seq[tables.Annotation]])]
-  = {
-    queue
-      .foldLeft[Try[(OMFSchemaResolver, Map[UUID, Seq[tables.Annotation]], Boolean)]](
-      Success(Tuple3(resolver, Map.empty, false))
-    ) {
-      case (Success(Tuple3(ri, mi, fi)), (uuid, x)) =>
-        val gi = ri.context.g
-        val tbox = ri.context.tboxes(uuid)
-        val statements = gi.outerNodeTraverser(gi.get(tbox))
-          .foldLeft[Map[UUID, _ <: api.TerminologyBoxStatement]](Map.empty) { case (acc, box) =>
-          acc ++ box.boxStatements.map(s => s.uuid -> s).toMap
-        }
-
-        val (available, remaining) = x.partition { a =>
-          statements.contains(UUID.fromString(a.subjectUUID)) &&
-          resolver.context.extent.contains(UUID.fromString(a.propertyUUID))
-        }
-        val si = available
-          .map { a =>
-            impl.Annotation(
-              statements(UUID.fromString(a.subjectUUID)),
-              resolver.context.extent(UUID.fromString(a.propertyUUID)),
-              a.value)
-          }
-          .to[Set]
-        impl.TerminologyContext
-          .replaceNode(gi, tbox, tbox.withAnnotations(si))
-          .map { gj =>
-            Tuple3(
-              ri.copy(context = impl.TerminologyContext(ri.context.extent, gj)),
-              mi + (uuid -> remaining),
-              fi || si.nonEmpty)
-          }
-      case (Failure(t), _) =>
-        Failure(t)
-    } match {
-      case Success(Tuple3(r, m, f)) =>
-        if (f)
-          resolveAnnotationPairs(r, m)
-        else
-          Success(Tuple2(r, m.flatMap(_._2).to[Seq]))
-      case Failure(t) =>
-        Failure(t)
-    }
-  }
-  */
 }

@@ -19,7 +19,11 @@ package jpl.imce.oml.specification
 
 import com.google.inject.Injector
 import org.eclipse.emf.ecore.EPackage
-import jpl.imce.oml.specification.ecore.OMLPackage
+import gov.nasa.jpl.imce.oml.common.CommonPackage
+import gov.nasa.jpl.imce.oml.terminologies.TerminologiesPackage
+import gov.nasa.jpl.imce.oml.graphs.GraphsPackage
+import gov.nasa.jpl.imce.oml.bundles.BundlesPackage
+import gov.nasa.jpl.imce.oml.descriptions.DescriptionsPackage
 
 /**
  * Initialization support for running Xtext languages without Equinox extension registry.
@@ -31,8 +35,20 @@ class OntologicalModelingLanguageStandaloneSetup extends OntologicalModelingLang
 	}
 	
 	override def register(Injector injector) {
-		if (!EPackage.Registry.INSTANCE.containsKey(OMLPackage.eNS_URI)) {
-			EPackage.Registry.INSTANCE.put(OMLPackage.eNS_URI, OMLPackage.eINSTANCE);
+		if (!EPackage.Registry.INSTANCE.containsKey(CommonPackage.eNS_URI)) {
+			EPackage.Registry.INSTANCE.put(CommonPackage.eNS_URI, CommonPackage.eINSTANCE);
+		}
+		if (!EPackage.Registry.INSTANCE.containsKey(TerminologiesPackage.eNS_URI)) {
+			EPackage.Registry.INSTANCE.put(TerminologiesPackage.eNS_URI, TerminologiesPackage.eINSTANCE);
+		}
+		if (!EPackage.Registry.INSTANCE.containsKey(GraphsPackage.eNS_URI)) {
+			EPackage.Registry.INSTANCE.put(GraphsPackage.eNS_URI, GraphsPackage.eINSTANCE);
+		}
+		if (!EPackage.Registry.INSTANCE.containsKey(BundlesPackage.eNS_URI)) {
+			EPackage.Registry.INSTANCE.put(BundlesPackage.eNS_URI, BundlesPackage.eINSTANCE);
+		}
+		if (!EPackage.Registry.INSTANCE.containsKey(DescriptionsPackage.eNS_URI)) {
+			EPackage.Registry.INSTANCE.put(DescriptionsPackage.eNS_URI, DescriptionsPackage.eINSTANCE);
 		}
 		super.register(injector)
 	}

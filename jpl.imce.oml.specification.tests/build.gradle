@@ -10,9 +10,9 @@ dependencies {
 	
 	compile project(':jpl.imce.oml.specification.ecore')
 	testCompile project(':jpl.imce.oml.specification')
-	testCompile withEclipseBundle('org.eclipse.xtext.junit4')
-	testCompile withEclipseBundle('org.eclipse.xtext.xbase.junit')
-	testCompile withEclipseBundle('com.itemis.xtext.testing')
+	testCompile withEclipseBundle('org.eclipse.xtext.testing')
+	
+	//testCompile withEclipseBundle('com.itemis.xtext.testing')
 }
 
 configurations {
@@ -20,6 +20,19 @@ configurations {
 	testCompile.transitive = true
 }
 
+sourceSets {
+	main {
+		output.classesDir = 'build/target/classes/main/'
+		java.srcDirs = []
+		resources.srcDirs = []
+	}
+	test {
+		output.classesDir = 'build/target/classes/test/'
+		java.srcDirs = ['src', 'src-gen']
+		resources.srcDirs = ['resources', 'src', 'src-gen']
+		xtendOutputDir = 'xtend-gen'
+	}
+}
 //this is an eclipse plugin project
 eclipseClasspath.enabled=false
 cleanEclipseClasspath.enabled=false

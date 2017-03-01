@@ -17,54 +17,34 @@
  */
  package gov.nasa.jpl.imce.oml.specification.scala.generators
 
-import java.util.Map
-import jpl.imce.oml.specification.ecore.OMLPackage
-import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EClass
-import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.util.EcoreUtil
 
 class OMLLoadTest extends OMLUtilities {
 	
 	static def main(String[] args) {
-		if (1 != args.length) {
-			System.err.println("usage: <dir> where <dir> is the directory of the /gov.nasa.jpl.imce.oml.specification.tables project")
-			System.exit(1)
-		}
+		val o = new OMLLoadTest()
+		o.test()
+	}
+	
+	def test() {
+		val extent =
+		c
+		.EClassifiers
+		.filter(EClass)
+		.findFirst[name == 'Extent']
 		
-		val xcoreFile = "/model/OMLSpecification.xcore"
-		
-		val set = createXcoreResourceSet(
-			[Map<URI,URI> uriMap | 
-			uriMap.put(
-				URI.createURI("platform:/resource/jpl.imce.oml.specification.ecore"+xcoreFile),
-				URI.createURI(OMLPackage.getResource(xcoreFile).toURI.toString))
-				])
-
-      	val sourceURI = URI.createPlatformResourceURI("/jpl.imce.oml.specification.ecore"+xcoreFile, false)
-      	val sourceResource = set.getResource(sourceURI, true)
-    
-      	EcoreUtil.resolveAll(set)
-      	if (!sourceResource.errors.empty) {
-      		System.err.println(sourceResource.errors.size + " errors in resource!")
-      		sourceResource.errors.forEach[e |
-      			System.err.println(e.class.name + " => " + e.message)
-      		]
-      	}
-      	val ePackage = sourceResource.getContents().filter(EPackage).get(0)
-      	      	
-      	val eboolean_name = 
-      	ePackage
+      	val module_extent = 
+      	c
       	.EClassifiers
       	.filter(EClass)
-      	.findFirst[name == 'Concept']
-      	.EStructuralFeatures
-      	.findFirst[name == 'isAbstract']
-      	.EType
-      	.name
+      	.findFirst[name == 'Module']
+      	.EOperations
+      	.findFirst[name == 'extent']
       	
-      	if ("EBoolean" != eboolean_name) {
-      		System.err.println("Concept.isAbstract should be typed by EBoolean")
+      	if (extent != module_extent.EType) {
+      		System.err.println("Module.extent() should be typed by Extent")
+      		System.err.println("Module.extent().EType ="+module_extent.EType)
+      		System.err.println("TerminologyExtent ="+extent)
       	} else { 		
      		System.out.println("OK")
       	}

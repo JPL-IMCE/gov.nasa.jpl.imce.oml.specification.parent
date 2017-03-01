@@ -4,6 +4,15 @@
 
 * [Ontological Modeling Language Specification](README.md)
 
+## Specification Document
+
+* [How to Read This Specification](HowToReadThisSpecification.md)
+* [Common Definitions about OML](OMLCommon.md)
+* [Definitions about OML TerminologyBoxes](OMLTbox.md)
+* [Definitions about OML Terminology Graphs](OMLGraphs.md)
+* [Definitions about OML Terminology Bundles](OMLBundles.md)
+* [Definitions about OML Descriptions](OMLDescriptions.md)
+
 ## Topics
 
 * [Ontological Modeling](OntologicalModeling.md) 

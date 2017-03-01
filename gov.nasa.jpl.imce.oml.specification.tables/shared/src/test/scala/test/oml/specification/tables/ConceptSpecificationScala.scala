@@ -39,7 +39,7 @@ package test.oml.specification.tables
 import gov.nasa.jpl.imce.oml.specification.tables._
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Properties
-import scala.{Boolean,StringContext}
+import scala.StringContext
 import scala.Predef.String
 
 object ConceptSpecificationScala extends Properties("Concept") {
@@ -47,15 +47,13 @@ object ConceptSpecificationScala extends Properties("Concept") {
   property("construction") = forAll(
     SchemaGenerators.uuid,
     SchemaGenerators.uuid,
-    SchemaGenerators.isAbstract,
-    SchemaGenerators.name)((graphUUID: java.util.UUID, uuid: java.util.UUID, isAbstract: Boolean, name: String) => {
-    val w = new Concept(graphUUID.toString, uuid.toString, isAbstract, name)
+    SchemaGenerators.name)((graphUUID: java.util.UUID, uuid: java.util.UUID, name: String) => {
+    val w = new Concept(graphUUID.toString, uuid.toString, name)
     val s = ConceptHelper.toJSON(w)
-    val t = s"""{"tboxUUID":"${w.tboxUUID}","uuid":"${w.uuid}","isAbstract":${w.isAbstract},"name":"${w.name}"}"""
+    val t = s"""{"tboxUUID":"${w.tboxUUID}","uuid":"${w.uuid}","name":"${w.name}"}"""
     val r = ConceptHelper.fromJSON(s)
     (s == t) &&
       (w.uuid == r.uuid) &&
-      (w.isAbstract == r.isAbstract) &&
       (w.name == r.name)
   })
 

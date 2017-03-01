@@ -92,7 +92,7 @@ object TerminologyEdge {
     case tx: resolver.api.BundledTerminologyAxiom =>
       thatSource match {
         case thatBundle: resolver.api.Bundle =>
-          factory.copyBundledTerminologyAxiom_terminologyBundle(tx, thatBundle)
+          factory.copyBundledTerminologyAxiom_bundle(tx, thatBundle)
         case _ =>
           throw new java.lang.IllegalArgumentException(
             "replaceAxiomSource for a BundledTerminologyAxiom must be a TerminologyGraph!")
